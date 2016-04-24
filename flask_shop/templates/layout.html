@@ -1,0 +1,102 @@
+{% from "macros.html" import nav_link with context %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{title}}{% block title %}{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <style type="text/css">
+      .container {
+        max-width: 500px;
+        padding-top: 100px;
+      }
+      h2 {color: red;}
+    </style>
+
+    <link href="/static/css/base.css" rel="stylesheet" media="screen">
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script>
+    <script src="/static/jquery_functions.js"></script>
+    {% block head %}{% endblock %}
+  </head>
+  <body>
+  {% block slides %}
+  {% endblock %}
+
+    <div class="container-fluid" id="navbar">
+      <div class="row">
+        <div class="col-md-4 col-sm-4" id="logo">
+            <a href="/index">
+              <img class="img-responsive" src="/static/images/logo.png">
+            </a>
+        </div>
+
+
+        <div class="col-md-8 col-sm-8" id="menu">
+          <div class="col-sm-12" id="submenu">
+            <div class="col-md-3 col-sm-3" id="currency">
+                <a href="/setcurrency/CHF">CHF</a>
+                <a href="/setcurrency/EUR">EUR</a>
+                <a href="/setcurrency/USD">USD</a>
+            </div>
+            <div class="col-md-3 pull-right" id="lang">
+                <a href="/setlang/en">EN</a>
+                <span>/</span>
+                <a href="/setlang/de">DE</a>
+            </div>
+          </div>
+          <div class="row text-center">
+            <a class="col-md-2" href="{{ url_for('home') }}">{{ _('Gallery') }}</a>
+            <a class="col-md-2" href="{{ url_for('products') }}">{{ _('Products') }}</a>
+            <a class="col-md-2" href="{{ url_for('cart') }}">{{ _('My Cart') }}</a>
+            <a class="col-md-2" href="{{ url_for('about') }}">{{ _('About') }}</a>
+            <a class="col-md-2" href="{{ url_for('login') }}">{{ _('Login') }}</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="breadcrumb" style="display: none">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul>
+        {% for message in messages %}
+            <li>{{ message }} </li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+      {% block heading %}
+            <p>_ {% block page %}{% endblock %}</p>
+        {% endblock %}
+    </div>
+
+     <div class="container-fluid">
+       {% block content %}{% endblock %}
+     </div>
+
+    {% block footer %}
+        <div class="container-fluid"  id="footer">
+          <div class="row">
+            <div class="col-md-8 col-sm-12">
+              <a href="#">Zahlung/Versand</a>
+              <a href="#" class="active">Widerrufsrecht</a>
+              <a href="#">AGB</a>
+              <a href="#">Datenschutz</a>
+              <a href="#">Impressum</a>
+            </div>
+            <div class="col-md-4 col-sm-12 text-right" id="registered">
+              2016 MillionDog Alle Rechte vorbehalten
+            </div>
+          </div>
+        </div>
+    {% endblock %}
+
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.2.6/js/bootstrap.min.js"></script>
+    {% block js %}
+    {% endblock %}
+  </body>
+</html>

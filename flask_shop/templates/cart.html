@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% block title %} - {{page}}{% endblock %}
+{% block page %} / Einkaufswagen{% endblock %}
+{% block heading %}
+  {{ super() }}
+{% endblock %}
+{% block content %}
+  <h3>Products:</h3>
+  {% if product %}
+  <ul>
+    {% for n in product %}
+    <li>
+        {{n.id, n.name, n.description, n.list_price}}
+    </li>
+      {% endfor %}
+  </ul>
+  {% endif %}
+  <h3>User list</h3>
+  <br>
+      <p>{{message}}</p>
+      <p>Value from the list: {{id}}</p>
+        <p><a href='/checkout'>Checkout</a></p>
+{% endblock %}

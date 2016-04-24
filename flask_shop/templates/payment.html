@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% block title %} - {{page}}{% endblock %}
+{% block page %} / Checkout / Payment {% endblock %}
+{% block heading %}
+  {{ super() }}
+{% endblock %}
+{% block content %}
+	<div class="container">
+		{% if session['logged_in'] %}
+			<p>In order to pay you will be forwarded to Paypal:</p>
+			<form name="topaypal" action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
+				<input type="hidden" name="cmd" value="_xclick">
+				<input type="hidden" name="custom" value="{{session['sale_id']}}"/>
+				<input type="hidden" name="business" value="express3.com-facilitator@gmail.com">
+				<input type="hidden" name="item_name" value="Cosy Bandana L">
+				<input type="hidden" name="item_number" value="1001">
+				<input type="hidden" name="no_shipping" value="0">
+				<input type="hidden" name="amount" value="55.00">
+				<input type="hidden" name="currency_code" value="CHF">
+				<input type="hidden" name="shipping" value="3.50">
+				<input type="hidden" name="return" value="http://85.7.120.190:5000/success/">
+				<input type="hidden" name="cancel_return" value="http://85.7.120.190:5000/cancel/">
+				<input type="hidden" name="notify_url" value="http://85.7.120.190:5000/ipn/">
+				<input type="submit" value="Pay" name="submit" title="PayPal - The safer, easier way to pay online!" class="btn btn-primary">
+			</form>	
+		{% else %}
+			<p>You need to be <a href="/login/" target="blank"><strong>logged in</strong></a> to pay.</p>
+		{% endif %}
+	</div>
+{% endblock %}
