@@ -13,7 +13,8 @@ import requests
 from decimal import *
 
 CONFIG = "./tryton.conf"
-config.set_trytond("tryton_dev3", config_file=CONFIG)
+DATABASE_NAME = "tryton_dev"
+config.set_trytond(DATABASE_NAME, config_file=CONFIG)
 
 @babel.localeselector
 def get_locale():
@@ -64,7 +65,7 @@ def home():
 
 @app.route("/products/")
 def products():
-    config.set_trytond("tryton_dev3", config_file=CONFIG)
+    config.set_trytond(DATABASE_NAME, config_file=CONFIG)
     Product = Model.get('product.product')
     product = Product.find(['id', '>=', '0']);
     return render_template('products.html', db_model='Products', db_list=product, title="Milliondog", page='Products')
@@ -87,7 +88,7 @@ def index():
 
 @app.route('/productcategories/')
 def product_categories():
-    config.set_trytond("tryton_dev3", config_file=CONFIG)
+    config.set_trytond(DATABASE_NAME, config_file=CONFIG)
     ProductCategory = Model.get('product.category')
     categories = ProductCategory.find(['id', '>=', '0'])
     idlist = [c.name for c in categories]
@@ -97,7 +98,7 @@ def product_categories():
 
 @app.route('/cart/')
 def cart():
-    config.set_trytond("tryton_dev3", config_file=CONFIG)
+    config.set_trytond(DATABASE_NAME, config_file=CONFIG)
     User = Model.get('res.user')
     user = User.find(['id', '=', '1'])
     product = getProductFromSession()
@@ -112,12 +113,21 @@ def cart_add(productid=None):
 
 @app.route('/account/')
 def account():
-    config.set_trytond("tryton_dev3", config_file=CONFIG)
+    config.set_trytond(DATABASE_NAME, config_file=CONFIG)
     User = Model.get('res.user')
     user = User.find(['id', '=', '1'])
     Party = Model.get('party.party')
     partyList = Party.find(['id', '>=', '0'])
-    return render_template('account.html', message=user[0].name, id=user[0].id, db_list=partyList, title="Milliondog", page='Account')
+    Stock = Model.get('stock.move')
+    stocklist = Stock.find(['id', '>=', '0'])
+    Product = Model.get('product.product')
+    productlist = Product.find(['id', '>=', '0']);
+    Sale = Model.get('sale.sale')
+    salelist = Sale.find(['id', '>=', '0'])
+    Invoice = Model.get('account.invoice')
+    invoicelist = Invoice.find(['id', '>=', '0'])
+    return render_template('account.html', message=user[0].name,
+                           id=user[0].id, db_list=partyList, invoice_list=invoicelist, sale_list=salelist, stock_list=stocklist, product_list=productlist, title="Milliondog", page='Account')
 
 
 @app.route('/setlang/<language>')
@@ -165,7 +175,7 @@ def contact():
 # Checkout process
 @app.route('/checkout/', methods=['GET', 'POST'])
 def checkout():
-    config.set_trytond("tryton_dev3", config_file=CONFIG)
+    config.set_trytond(DATABASE_NAME, config_file=CONFIG)
     page_topic = gettext(u'Checkout')
     page_content = gettext(u'Please enter your address here:')
     product = getProductFromSession()
@@ -195,6 +205,9 @@ def checkout():
             sale = Sale()
             if (sale.id < 0):
                 sale.party = party
+                Paymentterm = Model.get('account.invoice.payment_term')
+                paymentterm = Paymentterm.find([('name', '=', 'cash')])
+                sale.payment_term = paymentterm[0]
                 line = sale.lines.new(quantity=1)
                 line.product = product[0]
                 line.description = product[0].name
@@ -242,7 +255,7 @@ def cancel():
 
 @app.route('/testpayment/')
 def testpayment():
-    config.set_trytond("tryton_dev3", config_file=CONFIG)
+    config.set_trytond(DATABASE_NAME, config_file=CONFIG)
     Sale = Model.get('sale.sale')
     saleid = 15
     payment_gross = 55.00
@@ -311,7 +324,7 @@ def ipn():
             # mark order in tryton as paid
             # c.execute("INSERT INTO ipn (unix, payment_date, username, last_name, payment_gross, payment_fee, payment_net, payment_status, txn_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
             #           (unix, payment_date, username, last_name, payment_gross, payment_fee, payment_net, payment_status, txn_id))
-            config.set_trytond("tryton_dev3", config_file=CONFIG)
+            config.set_trytond(DATABASE_NAME, config_file=CONFIG)
             Sale = Model.get('sale.sale')
             saleList = Sale.find(['id', '=', saleid]);
             if saleList is not None:
