@@ -20,5 +20,12 @@
     </li>
     {% endfor %}
   </ul>
+  <ul>
+    {% for n in attachments %}
+    <li>
+      {{n.id, n.type, n.link, n.resource}}
+    </li>
+    {% endfor %}
+  </ul>
   <h3></h3>
 {% endblock %}
