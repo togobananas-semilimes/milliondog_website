@@ -68,7 +68,14 @@ def products():
     config.set_trytond(DATABASE_NAME, config_file=CONFIG)
     Product = Model.get('product.product')
     product = Product.find(['id', '>=', '0']);
-    return render_template('products.html', db_model='Products', db_list=product, title="Milliondog", page='Products')
+    Attachments = Model.get('ir.attachment')
+    Template = Model.get('product.template')
+    attachmentlist = []
+    for n in product:
+        template = Template.find(['id', '=', n.id]);
+        for a in template:
+            attachmentlist.extend(Attachments.find(['resource', '=', 'product.template,'+str(a.id)]))
+    return render_template('products.html', db_model='Products', db_list=product, attachments=attachmentlist, title="Milliondog", page='Products')
 
 @app.route("/")
 @app.route('/index/')
