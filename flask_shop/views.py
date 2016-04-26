@@ -57,11 +57,37 @@ def about():
                 ''')
     return render_template('about.html', pt=page_topic, pc=page_content, title="Milliondog", page='About')
 
-@app.route("/home/")
-def home():
+@app.route("/sendus/")
+def sendus():
+    page_topic = gettext(u'Send us')
+    page_content = gettext(u'''
+                <br>We welcome your enquiries regarding our exclusive service using your own fabrics, for example we can use material from your children’s, parent’s or partner’s clothes to make a special Milliondog-Cosy for your dog. Get in touch with us so we can work together to give your dog a unique look.
+                <br>Let your dog play his own part by wearing a Milliondog-Cosy at a special day in your life.
+                <br>For more information contact us by Email
+                ''')
+    return render_template('sendus.html', pt=page_topic, pc=page_content, title="Milliondog", page='Send us')
+
+@app.route("/shop/")
+def shop():
+    page_topic = gettext(u'Shop')
+    page_content = gettext(u'Shop:')
+    config.set_trytond(DATABASE_NAME, config_file=CONFIG)
+    Product = Model.get('product.product')
+    product = Product.find(['id', '>=', '0']);
+    Attachments = Model.get('ir.attachment')
+    Template = Model.get('product.template')
+    attachmentlist = []
+    for n in product:
+        template = Template.find(['id', '=', n.id]);
+        for a in template:
+            attachmentlist.extend(Attachments.find(['resource', '=', 'product.template,'+str(a.id)]))
+    return render_template('shop.html', pt=page_topic, pc=page_content, db_model='Products', db_list=product, attachments=attachmentlist, title="Milliondog", page='Home')
+
+@app.route("/gallery/")
+def gallery():
     page_topic = gettext(u'Gallery')
     page_content = gettext(u'Gallery:')
-    return render_template('home.html', pt=page_topic, pc=page_content, title="Milliondog", page='Home')
+    return render_template('gallery.html', pt=page_topic, pc=page_content, title="Milliondog", page='Gallery')
 
 @app.route("/products/")
 def products():
@@ -110,7 +136,7 @@ def cart():
     user = User.find(['id', '=', '1'])
     product = getProductFromSession()
     session['user_name'] = 'paypal_testuser'
-    return render_template('cart.html', message=user[0].name, id=user[0].id, product=product, title="Milliondog", page='Einkaufswagen')
+    return render_template('cart.html', message=user[0].name, id=user[0].id, product=product, title="Milliondog", page='Cart')
 
 
 @app.route('/cart/add/<productid>')
@@ -383,7 +409,7 @@ def shipping():
                 Estimate shipping time is about 4-7 working days within Switzerland, approximately 20 working days for overseas, 7.50 CHF, for all articles.<br>
                 Please feel free to contact us if you have any question. Hope you enjoy dealing with us!<br>
                 ''')
-    return render_template('about.html', pt=page_topic, pc=page_content, title="Milliondog", page='About')
+    return render_template('generic.html', pt=page_topic, pc=page_content, title="Milliondog", page='About')
 
 @app.route("/returns/")
 def returns():
@@ -396,7 +422,7 @@ def returns():
                 All returns of goods that have obviously been used and that therefore can not be sold will not be accepted.<br>
                 The payment amount will be credited back to your PayPal account.<br>
                 ''')
-    return render_template('about.html', pt=page_topic, pc=page_content, title="Milliondog", page='About')
+    return render_template('generic.html', pt=page_topic, pc=page_content, title="Milliondog", page='About')
 
 @app.route("/termsandconditions/")
 def termsandconditions():
@@ -414,13 +440,13 @@ def termsandconditions():
         7. Freistellung bei Verletzung von Drittrechten<br>
         8. Anwendbares Recht<br>
                 ''')
-    return render_template('about.html', pt=page_topic, pc=page_content, title="Milliondog", page='About')
+    return render_template('generic.html', pt=page_topic, pc=page_content, title="Milliondog", page='About')
 
 @app.route("/privacy/")
 def privacy():
     page_topic = gettext(u'Privacy Statment')
     page_content = gettext(u'<br>')
-    return render_template('about.html', pt=page_topic, pc=page_content, title="Milliondog", page='About')
+    return render_template('generic.html', pt=page_topic, pc=page_content, title="Milliondog", page='About')
 
 @app.route("/legal/")
 def legal():
@@ -431,4 +457,4 @@ def legal():
                                 e-mail: informme@milliondog.com<br>
                                 All contents on www.milliondog are owned by Milliondog and copyright protected. Any use of milliondog`s contents, including pictures, texts and intellectual property needs strictly consent by Milliondog
                 ''')
-    return render_template('about.html', pt=page_topic, pc=page_content, title="Milliondog", page='About')
+    return render_template('generic.html', pt=page_topic, pc=page_content, title="Milliondog", page='About')
