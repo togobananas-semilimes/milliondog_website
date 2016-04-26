@@ -409,7 +409,7 @@ def shipping():
                 Estimate shipping time is about 4-7 working days within Switzerland, approximately 20 working days for overseas, 7.50 CHF, for all articles.<br>
                 Please feel free to contact us if you have any question. Hope you enjoy dealing with us!<br>
                 ''')
-    return render_template('generic.html', pt=page_topic, pc=page_content, title="Milliondog", page='About')
+    return render_template('generic.html', pt=page_topic, pc=page_content, title="Milliondog", page='Payment & Shipping')
 
 @app.route("/returns/")
 def returns():
@@ -422,7 +422,7 @@ def returns():
                 All returns of goods that have obviously been used and that therefore can not be sold will not be accepted.<br>
                 The payment amount will be credited back to your PayPal account.<br>
                 ''')
-    return render_template('generic.html', pt=page_topic, pc=page_content, title="Milliondog", page='About')
+    return render_template('generic.html', pt=page_topic, pc=page_content, title="Milliondog", page='Returns')
 
 @app.route("/termsandconditions/")
 def termsandconditions():
@@ -440,13 +440,13 @@ def termsandconditions():
         7. Freistellung bei Verletzung von Drittrechten<br>
         8. Anwendbares Recht<br>
                 ''')
-    return render_template('generic.html', pt=page_topic, pc=page_content, title="Milliondog", page='About')
+    return render_template('generic.html', pt=page_topic, pc=page_content, title="Milliondog", page='Terms & Conditions')
 
 @app.route("/privacy/")
 def privacy():
     page_topic = gettext(u'Privacy Statment')
     page_content = gettext(u'<br>')
-    return render_template('generic.html', pt=page_topic, pc=page_content, title="Milliondog", page='About')
+    return render_template('generic.html', pt=page_topic, pc=page_content, title="Milliondog", page='Privacy')
 
 @app.route("/legal/")
 def legal():
@@ -457,4 +457,4 @@ def legal():
                                 e-mail: informme@milliondog.com<br>
                                 All contents on www.milliondog are owned by Milliondog and copyright protected. Any use of milliondog`s contents, including pictures, texts and intellectual property needs strictly consent by Milliondog
                 ''')
-    return render_template('generic.html', pt=page_topic, pc=page_content, title="Milliondog", page='About')
+    return render_template('generic.html', pt=page_topic, pc=page_content, title="Milliondog", page='Legal')
