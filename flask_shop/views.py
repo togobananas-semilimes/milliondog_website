@@ -370,3 +370,65 @@ def ipn():
         return r.text
     except Exception as e:
         return str(e)
+
+
+# footer information
+@app.route("/shipping/")
+def shipping():
+    page_topic = gettext(u'Payment and Shipping')
+    page_content = gettext(u'''
+                Payment & Shipping<br>
+                We accept PayPAL payment only.<br>
+                Handling time: 2-3 days<br>
+                Estimate shipping time is about 4-7 working days within Switzerland, approximately 20 working days for overseas, 7.50 CHF, for all articles.<br>
+                Please feel free to contact us if you have any question. Hope you enjoy dealing with us!<br>
+                ''')
+    return render_template('about.html', pt=page_topic, pc=page_content, title="Milliondog", page='About')
+
+@app.route("/returns/")
+def returns():
+    page_topic = gettext(u'Right of revocation')
+    page_content = gettext(u'''
+                Right of revocation<br>
+                Conditions of returned goods<br>
+                We will gladly take back your order if you are not satisfied.<br>
+                Please note, however that the goods must be in the normal conditions.<br>
+                All returns of goods that have obviously been used and that therefore can not be sold will not be accepted.<br>
+                The payment amount will be credited back to your PayPal account.<br>
+                ''')
+    return render_template('about.html', pt=page_topic, pc=page_content, title="Milliondog", page='About')
+
+@app.route("/termsandconditions/")
+def termsandconditions():
+    page_topic = gettext(u'General terms and conditions')
+    page_content = gettext(u'''
+        Terms & Conditions<br><br>
+        Allgemeine Geschäftsbedingungen mit Kundeninformationen<br>
+
+        1. Geltungsbereich<br>
+        2. Vertragsschluss<br>
+        3. Widerrufsrecht<br>
+        4. Preise und Zahlungsbedingungen<br>
+        5. Liefer und Versandbedingungen<br>
+        6. Mängelhaftung<br>
+        7. Freistellung bei Verletzung von Drittrechten<br>
+        8. Anwendbares Recht<br>
+                ''')
+    return render_template('about.html', pt=page_topic, pc=page_content, title="Milliondog", page='About')
+
+@app.route("/privacy/")
+def privacy():
+    page_topic = gettext(u'Privacy Statment')
+    page_content = gettext(u'<br>')
+    return render_template('about.html', pt=page_topic, pc=page_content, title="Milliondog", page='About')
+
+@app.route("/legal/")
+def legal():
+    page_topic = gettext(u'Legal notice')
+    page_content = gettext(u'''Legal notice<br><br>
+                                MillionDog<br>
+                                CH-4800 Zofingen<br>
+                                e-mail: informme@milliondog.com<br>
+                                All contents on www.milliondog are owned by Milliondog and copyright protected. Any use of milliondog`s contents, including pictures, texts and intellectual property needs strictly consent by Milliondog
+                ''')
+    return render_template('about.html', pt=page_topic, pc=page_content, title="Milliondog", page='About')

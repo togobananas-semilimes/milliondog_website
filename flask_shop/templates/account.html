@@ -74,7 +74,7 @@
   <p>Loop through the list:</p>
   <ul>
     {% for n in invoice_list %}
-    <li>{{n.id, n.comment[0:50], n.payment_term, n.currency, n.description,
+    <li>{{n.id, n.payment_term, n.currency, n.description,
       n.move, n.cancel_move, n.state, n.party, n.type, n.invoice_address}}
           <ul>
             {% for o in n.lines %}
