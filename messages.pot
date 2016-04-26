@@ -8,20 +8,20 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-04-22 10:06+0200\n"
+"POT-Creation-Date: 2016-04-26 17:26+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.3.3\n"
+"Generated-By: Babel 2.0\n"
 
-#: flask_shop/views.py:18
+#: flask_shop/views.py:53 flask_shop/templates/layout.html:52
 msgid "About us"
 msgstr ""
 
-#: flask_shop/views.py:19
+#: flask_shop/views.py:54
 msgid ""
 "\n"
 "                We created Milliondog because we love dogs. Milliondog "
@@ -34,79 +34,185 @@ msgid ""
 "                "
 msgstr ""
 
-#: flask_shop/templates/layout.html:49 flask_shop/views.py:27
+#: flask_shop/views.py:62 flask_shop/templates/layout.html:53
+msgid "Send us"
+msgstr ""
+
+#: flask_shop/views.py:63
+msgid ""
+"\n"
+"                <br>We welcome your enquiries regarding our exclusive "
+"service using your own fabrics, for example we can use material from your"
+" children’s, parent’s or partner’s clothes to make a special Milliondog-"
+"Cosy for your dog. Get in touch with us so we can work together to give "
+"your dog a unique look.\n"
+"                <br>Let your dog play his own part by wearing a "
+"Milliondog-Cosy at a special day in your life.\n"
+"                <br>For more information contact us by Email\n"
+"                "
+msgstr ""
+
+#: flask_shop/views.py:72 flask_shop/templates/layout.html:50
+msgid "Shop"
+msgstr ""
+
+#: flask_shop/views.py:73
+msgid "Shop:"
+msgstr ""
+
+#: flask_shop/views.py:88 flask_shop/templates/layout.html:51
 msgid "Gallery"
 msgstr ""
 
-#: flask_shop/views.py:28
+#: flask_shop/views.py:89
 msgid "Gallery:"
 msgstr ""
 
-#: flask_shop/views.py:33
-msgid "Contact"
-msgstr ""
-
-#: flask_shop/views.py:34
-msgid "You can send us a message here:"
-msgstr ""
-
-#: flask_shop/views.py:49
+#: flask_shop/views.py:116
 msgid "Start"
 msgstr ""
 
-#: flask_shop/views.py:50
+#: flask_shop/views.py:117 flask_shop/views.py:265
+msgid "Payment"
+msgstr ""
+
+#: flask_shop/views.py:118
 msgid "exclusive accessoires for your awesome darling"
 msgstr ""
 
-#: flask_shop/templates/layout.html:50
-msgid "About"
+#: flask_shop/views.py:197 flask_shop/templates/layout.html:54
+msgid "Contact"
 msgstr ""
 
-#: flask_shop/templates/layout.html:51
-msgid "Contact Us"
+#: flask_shop/views.py:198
+msgid "You can send us a message here:"
 msgstr ""
 
-#: flask_shop/templates/layout.html:52
-msgid "Products"
+#: flask_shop/views.py:212
+msgid "Checkout"
 msgstr ""
 
-#: flask_shop/templates/layout.html:53
-msgid "Product Categories"
+#: flask_shop/views.py:213
+msgid "Please enter your address here:"
 msgstr ""
 
-#: flask_shop/templates/layout.html:64
-msgid "English"
+#: flask_shop/views.py:266
+msgid "Please follow the link to pay with Paypal:"
 msgstr ""
 
-#: flask_shop/templates/layout.html:66
-msgid "German"
+#: flask_shop/views.py:404
+msgid "Payment and Shipping"
 msgstr ""
 
-#: flask_shop/templates/layout.html:76
-msgid "My Cart"
+#: flask_shop/views.py:405
+msgid ""
+"\n"
+"                Payment & Shipping<br>\n"
+"                We accept PayPAL payment only.<br>\n"
+"                Handling time: 2-3 days<br>\n"
+"                Estimate shipping time is about 4-7 working days within "
+"Switzerland, approximately 20 working days for overseas, 7.50 CHF, for "
+"all articles.<br>\n"
+"                Please feel free to contact us if you have any question. "
+"Hope you enjoy dealing with us!<br>\n"
+"                "
 msgstr ""
 
-#: flask_shop/templates/layout.html:78
+#: flask_shop/views.py:416 flask_shop/templates/layout.html:88
+msgid "Right of revocation"
+msgstr ""
+
+#: flask_shop/views.py:417
+msgid ""
+"\n"
+"                Right of revocation<br>\n"
+"                Conditions of returned goods<br>\n"
+"                We will gladly take back your order if you are not "
+"satisfied.<br>\n"
+"                Please note, however that the goods must be in the normal"
+" conditions.<br>\n"
+"                All returns of goods that have obviously been used and "
+"that therefore can not be sold will not be accepted.<br>\n"
+"                The payment amount will be credited back to your PayPal "
+"account.<br>\n"
+"                "
+msgstr ""
+
+#: flask_shop/views.py:429
+msgid "General terms and conditions"
+msgstr ""
+
+#: flask_shop/views.py:430
+msgid ""
+"\n"
+"        Terms & Conditions<br><br>\n"
+"        Allgemeine Geschäftsbedingungen mit Kundeninformationen<br>\n"
+"\n"
+"        1. Geltungsbereich<br>\n"
+"        2. Vertragsschluss<br>\n"
+"        3. Widerrufsrecht<br>\n"
+"        4. Preise und Zahlungsbedingungen<br>\n"
+"        5. Liefer und Versandbedingungen<br>\n"
+"        6. Mängelhaftung<br>\n"
+"        7. Freistellung bei Verletzung von Drittrechten<br>\n"
+"        8. Anwendbares Recht<br>\n"
+"                "
+msgstr ""
+
+#: flask_shop/views.py:447
+msgid "Privacy Statment"
+msgstr ""
+
+#: flask_shop/views.py:448
+msgid "<br>"
+msgstr ""
+
+#: flask_shop/views.py:453
+msgid "Legal notice"
+msgstr ""
+
+#: flask_shop/views.py:454
+msgid ""
+"Legal notice<br><br>\n"
+"                                MillionDog<br>\n"
+"                                CH-4800 Zofingen<br>\n"
+"                                e-mail: informme@milliondog.com<br>\n"
+"                                All contents on www.milliondog are owned "
+"by Milliondog and copyright protected. Any use of milliondog`s contents, "
+"including pictures, texts and intellectual property needs strictly "
+"consent by Milliondog\n"
+"                "
+msgstr ""
+
+#: flask_shop/templates/cart.html:3
+msgid "cart"
+msgstr ""
+
+#: flask_shop/templates/layout.html:49
+msgid "Home"
+msgstr ""
+
+#: flask_shop/templates/layout.html:55
 msgid "My Account"
 msgstr ""
 
-#: flask_shop/templates/layout.html:80
-msgid "Admin"
+#: flask_shop/templates/layout.html:56
+msgid "Cart"
 msgstr ""
 
-#: flask_shop/templates/layout.html:81
-msgid "Logout"
+#: flask_shop/templates/layout.html:87
+msgid "Payment & Shipping"
 msgstr ""
 
-#: flask_shop/templates/layout.html:83
-msgid "Register"
+#: flask_shop/templates/layout.html:89
+msgid "Terms & conditions"
 msgstr ""
 
-#: flask_shop/templates/layout.html:106
-msgid "Alle Rechte vorbehalten"
+#: flask_shop/templates/layout.html:90
+msgid "Disclaimer"
 msgstr ""
 
-#: flask_shop/templates/layout.html:107
-msgid "Powered by semilimes"
+#: flask_shop/templates/layout.html:91
+msgid "Legal info"
 msgstr ""
 
