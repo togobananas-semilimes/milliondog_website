@@ -55,7 +55,7 @@ def about():
                 We created Milliondog because we love dogs. Milliondog symbolizes the importance of a dog for his owner and our philosophy reflects just that. Each Milliondog Cosy is unique in material and colour and emphasises the individual personality and uniqueness of your pawesome darling.
                 <br><br>We love our work and you can see this in every Cosy.
                 ''')
-    return render_template('about.html', pt=page_topic, pc=page_content, title="Milliondog", page='About')
+    return render_template('about.html', pt=page_topic, pc=page_content, title="Milliondog", page=gettext('About us'))
 
 @app.route("/sendus/")
 def sendus():
@@ -65,7 +65,7 @@ def sendus():
                 <br>Let your dog play his own part by wearing a Milliondog-Cosy at a special day in your life.
                 <br>For more information contact us by Email
                 ''')
-    return render_template('sendus.html', pt=page_topic, pc=page_content, title="Milliondog", page='Send us')
+    return render_template('sendus.html', pt=page_topic, pc=page_content, title="Milliondog", page=gettext('Send us'))
 
 @app.route("/shop/")
 def shop():
@@ -81,13 +81,13 @@ def shop():
         template = Template.find(['id', '=', n.id]);
         for a in template:
             attachmentlist.extend(Attachments.find(['resource', '=', 'product.template,'+str(a.id)]))
-    return render_template('shop.html', pt=page_topic, pc=page_content, db_model='Products', db_list=product, attachments=attachmentlist, title="Milliondog", page='Home')
+    return render_template('shop.html', pt=page_topic, pc=page_content, db_model='Products', db_list=product, attachments=attachmentlist, title="Milliondog", page=gettext('Shop'))
 
 @app.route("/gallery/")
 def gallery():
     page_topic = gettext(u'Gallery')
     page_content = gettext(u'Gallery:')
-    return render_template('gallery.html', pt=page_topic, pc=page_content, title="Milliondog", page='Gallery')
+    return render_template('gallery.html', pt=page_topic, pc=page_content, title="Milliondog", page=gettext('Gallery'))
 
 @app.route("/products/")
 def products():
@@ -101,7 +101,7 @@ def products():
         template = Template.find(['id', '=', n.id]);
         for a in template:
             attachmentlist.extend(Attachments.find(['resource', '=', 'product.template,'+str(a.id)]))
-    return render_template('products.html', db_model='Products', db_list=product, attachments=attachmentlist, title="Milliondog", page='Products')
+    return render_template('products.html', db_model='Products', db_list=product, attachments=attachmentlist, title="Milliondog", page=gettext('Products'))
 
 @app.route("/")
 @app.route('/index/')
@@ -114,7 +114,6 @@ def index():
         session['lang_code'] = 'de'
         session['currency_code'] = 'CHF'
     page_topic = gettext(u'Start')
-    print gettext(u'Payment')
     page_content = gettext(u'exclusive accessoires for your awesome darling')
     return render_template('index.html', pt=page_topic, pc=page_content, title="Milliondog", page='the cosy-company')
 
@@ -184,8 +183,7 @@ def login():
               (form.name.data, str(form.remember_me.data)))
         return redirect('/index')
     return render_template('login.html',
-                           title='Sign In',
-                           form=form)
+                           title="Milliondog", page=gettext('Sign in'), form=form)
 
 @app.route('/logout/')
 def logout():
@@ -202,7 +200,7 @@ def contact():
               (form.name.data, form.email.data, form.message.data, form.answer.data))
         return redirect('/index')
     return render_template('contact.html',
-                           pt=page_topic, pc=page_content, title="Milliondog", page='Contact',
+                           pt=page_topic, pc=page_content, title="Milliondog", page=gettext(u'Contact'),
                            form=form)
 
 # Checkout process
@@ -253,7 +251,7 @@ def checkout():
 
         return redirect('/payment')
     return render_template('checkout.html',
-                           pt=page_topic, pc=page_content, product=product, title="Milliondog", page='Checkout',
+                           pt=page_topic, pc=page_content, product=product, title="Milliondog", page=gettext(u'Checkout'),
                            form=form)
 
 
@@ -264,7 +262,7 @@ def payment():
         session['logged_in'] = 'user1'
         page_topic = gettext(u'Payment')
         page_content = gettext(u'Please follow the link to pay with Paypal:')
-        return render_template("payment.html", pt=page_topic, pc=page_content, title="Milliondog", page='Payment')
+        return render_template("payment.html", pt=page_topic, pc=page_content, title="Milliondog", page=gettext(u'Payment'))
     except Exception, e:
         return(str(e))
 
@@ -409,7 +407,7 @@ def shipping():
                 Estimate shipping time is about 4-7 working days within Switzerland, approximately 20 working days for overseas, 7.50 CHF, for all articles.<br>
                 Please feel free to contact us if you have any question. Hope you enjoy dealing with us!<br>
                 ''')
-    return render_template('generic.html', pt=page_topic, pc=page_content, title="Milliondog", page='Payment & Shipping')
+    return render_template('generic.html', pt=page_topic, pc=page_content, title="Milliondog", page=gettext('Payment and Shipping'))
 
 @app.route("/returns/")
 def returns():
@@ -422,7 +420,7 @@ def returns():
                 All returns of goods that have obviously been used and that therefore can not be sold will not be accepted.<br>
                 The payment amount will be credited back to your PayPal account.<br>
                 ''')
-    return render_template('generic.html', pt=page_topic, pc=page_content, title="Milliondog", page='Returns')
+    return render_template('generic.html', pt=page_topic, pc=page_content, title="Milliondog", page=gettext('Right of revocation'))
 
 @app.route("/termsandconditions/")
 def termsandconditions():
@@ -440,13 +438,13 @@ def termsandconditions():
         7. Freistellung bei Verletzung von Drittrechten<br>
         8. Anwendbares Recht<br>
                 ''')
-    return render_template('generic.html', pt=page_topic, pc=page_content, title="Milliondog", page='Terms & Conditions')
+    return render_template('generic.html', pt=page_topic, pc=page_content, title="Milliondog", page=gettext('General terms and conditions'))
 
 @app.route("/privacy/")
 def privacy():
     page_topic = gettext(u'Privacy Statment')
     page_content = gettext(u'<br>')
-    return render_template('generic.html', pt=page_topic, pc=page_content, title="Milliondog", page='Privacy')
+    return render_template('generic.html', pt=page_topic, pc=page_content, title="Milliondog", page=gettext('Privacy Statment'))
 
 @app.route("/legal/")
 def legal():
@@ -457,4 +455,4 @@ def legal():
                                 e-mail: informme@milliondog.com<br>
                                 All contents on www.milliondog are owned by Milliondog and copyright protected. Any use of milliondog`s contents, including pictures, texts and intellectual property needs strictly consent by Milliondog
                 ''')
-    return render_template('generic.html', pt=page_topic, pc=page_content, title="Milliondog", page='Legal')
+    return render_template('generic.html', pt=page_topic, pc=page_content, title="Milliondog", page=gettext('Legal notice'))
