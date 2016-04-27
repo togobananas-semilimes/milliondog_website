@@ -20,7 +20,7 @@ config.set_trytond(DATABASE_NAME, config_file=CONFIG)
 def get_locale():
     try:
         if session['lang_code'] is not None:
-            return session['lang_code'];
+            return session['lang_code']
     except KeyError:
         # session is not initialized
         return 'de'
@@ -73,12 +73,12 @@ def shop():
     page_content = gettext(u'Shop:')
     config.set_trytond(DATABASE_NAME, config_file=CONFIG)
     Product = Model.get('product.product')
-    product = Product.find(['id', '>=', '0']);
+    product = Product.find(['id', '>=', '0'])
     Attachments = Model.get('ir.attachment')
     Template = Model.get('product.template')
     attachmentlist = []
     for n in product:
-        template = Template.find(['id', '=', n.id]);
+        template = Template.find(['id', '=', n.id])
         for a in template:
             attachmentlist.extend(Attachments.find(['resource', '=', 'product.template,'+str(a.id)]))
     return render_template('shop.html', pt=page_topic, pc=page_content, db_model='Products', db_list=product, attachments=attachmentlist, title="Milliondog", page=gettext('Shop'))
@@ -93,12 +93,12 @@ def gallery():
 def products():
     config.set_trytond(DATABASE_NAME, config_file=CONFIG)
     Product = Model.get('product.product')
-    product = Product.find(['id', '>=', '0']);
+    product = Product.find(['id', '>=', '0'])
     Attachments = Model.get('ir.attachment')
     Template = Model.get('product.template')
     attachmentlist = []
     for n in product:
-        template = Template.find(['id', '=', n.id]);
+        template = Template.find(['id', '=', n.id])
         for a in template:
             attachmentlist.extend(Attachments.find(['resource', '=', 'product.template,'+str(a.id)]))
     return render_template('products.html', db_model='Products', db_list=product, attachments=attachmentlist, title="Milliondog", page=gettext('Products'))
@@ -153,7 +153,7 @@ def account():
     Stock = Model.get('stock.move')
     stocklist = Stock.find(['id', '>=', '0'])
     Product = Model.get('product.product')
-    productlist = Product.find(['id', '>=', '0']);
+    productlist = Product.find(['id', '>=', '0'])
     Sale = Model.get('sale.sale')
     salelist = Sale.find(['id', '>=', '0'])
     Invoice = Model.get('account.invoice')
@@ -242,8 +242,8 @@ def checkout():
                 line = sale.lines.new(quantity=1)
                 line.product = product[0]
                 line.description = product[0].name
-                line.quantity = 1;
-                line.sequence = 1;
+                line.quantity = 1
+                line.sequence = 1
                 sale.save()
                 session['sale_id'] = sale.id
         flash('Checkout started successfully name="%s", name2=%s, saleid=%s' %
@@ -290,7 +290,7 @@ def testpayment():
     Sale = Model.get('sale.sale')
     saleid = 15
     payment_gross = 55.00
-    saleList = Sale.find(['id', '=', saleid]);
+    saleList = Sale.find(['id', '=', saleid])
     if saleList is not None:
         check_order = True
         if (saleList[0].state != 'draft'):
@@ -357,7 +357,7 @@ def ipn():
             #           (unix, payment_date, username, last_name, payment_gross, payment_fee, payment_net, payment_status, txn_id))
             config.set_trytond(DATABASE_NAME, config_file=CONFIG)
             Sale = Model.get('sale.sale')
-            saleList = Sale.find(['id', '=', saleid]);
+            saleList = Sale.find(['id', '=', saleid])
             if saleList is not None:
                 check_order = True
                 if (saleList[0].state != 'draft'):

@@ -12,10 +12,17 @@
   <p>Loop through the list:</p>
   <ul>
     {% for n in db_list %}
-    <li><a href="/cart/add/{{n.id}}">Buy</a>{{n.id, n.name, n.description, n.list_price}}
+    <li><a href="/cart/add/{{n.id}}">Buy</a>{{n.id, n.code, n.name, n.description, n.list_price}}
+      {% if n.attributes %}
+        <ul>
+          {% for key, value in n.attributes.iteritems() %}
+          <li>{{key, value}}</li>
+          {% endfor %}
+          </ul>
+      {% endif %}
       <ul>
       {% for o in n.categories %}
-      <li>{{o.id, o.name, o.description}}</li>
+      <li>{{o.id, o.name, o.parent}}</li>
       {% endfor %}
         </ul>
     </li>
