@@ -67,6 +67,16 @@ def sendus():
                 ''')
     return render_template('sendus.html', pt=page_topic, pc=page_content, title="Milliondog", page=gettext('Send us'))
 
+@app.route("/product/<productid>")
+def product(productid=None):
+    page_topic = gettext(u'Product')
+    page_content = gettext(u'Product:')
+    config.set_trytond(DATABASE_NAME, config_file=CONFIG)
+    Product = Model.get('product.product')
+    product = Product.find(['id', '=', productid])
+    return render_template('product.html', pt=page_topic, pc=page_content, product=product[0], title="Milliondog", page=gettext('Product'))
+
+
 @app.route("/shop/")
 def shop():
     page_topic = gettext(u'Shop')

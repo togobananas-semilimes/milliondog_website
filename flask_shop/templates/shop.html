@@ -12,13 +12,16 @@
   <p>Loop through the list:</p>
   <ul>
     {% for n in db_list %}
-    <li><a href="/cart/add/{{n.id}}">Buy</a>{{n.id, n.code, n.name, n.description, n.list_price}}
+    <li><a href="/product/{{n.id}}">Details</a> &nbsp; <a href="/cart/add/{{n.id}}">Buy</a>{{n.id, n.code, n.name, n.description, n.list_price}}
       {% if n.attributes %}
+        <br><img src="/static/products/{{ n.attributes['image_tn'] }}">
         <ul>
-          {% for key, value in n.attributes.iteritems() %}
-          <li>{{key, value}}</li>
-          {% endfor %}
-          </ul>
+          <li>{{ n.attributes['serial_number'] }}</li>
+          <li>{{ n.attributes['shop_description'] }}</li>
+          <li>{{ n.attributes['pattern'] }}</li>
+          <li>{{ n.attributes['color'] }}</li>
+          <li>{{ n.attributes['size'] }}</li>
+        </ul>
       {% endif %}
       <ul>
       {% for o in n.categories %}
