@@ -10,6 +10,7 @@ babel = Babel(app)
 lm = LoginManager()
 lm.init_app(app)
 from flask_shop import views
+from flask_shop import server
 
 class CustomJSONEncoder(JSONEncoder):
     """This class adds support for lazy translation texts to Flask's
