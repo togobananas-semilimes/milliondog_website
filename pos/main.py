@@ -13,13 +13,26 @@ class PaymentScreen(Screen):
                 json.dump(result, fp)
                 fp.close()
             self.products_json = result
-            print ('products loaded.')
+            print ('on_success: products loaded.')
             self.manager.get_screen('posscreen').do_clear_item_list()
             self.parent.current = "posscreen"
 
+        def on_failure(req, result):
+            print ('on_failure: Could not send payment. Save to file instead.')
+            #TODO save order to file
+            self.manager.get_screen('posscreen').do_clear_item_list()
+            self.parent.current = "posscreen"
+
+        def on_error(req, result):
+            print ('on_error: Could not send payment. Save to file instead.')
+            #TODO save order to file
+            self.manager.get_screen('posscreen').do_clear_item_list()
+            self.parent.current = "posscreen"
+
+
         try:
             print("Pay and clear list")
-            payslip_positions = POSScreen.payslip_items_list
+            payslip_positions = self.manager.get_screen('posscreen').my_data
             for i in payslip_positions:
                 print("selling: " + i)
             # clear list
@@ -28,12 +41,29 @@ class PaymentScreen(Screen):
             saleurl = config.get('serverconnection', 'server.url') + "pos/sale/"
             data_json = json.dumps(payslip_positions)
             headers = {'Content-type': 'application/jsonrequest', 'Accept': 'application/jsonrequest'}
-            if len(POSScreen.payslip_items_list) > 0:
-                UrlRequest(url=saleurl, on_success=on_success, req_headers=headers, req_body=data_json)
+            if len(self.manager.get_screen('posscreen').my_data) > 0:
+                UrlRequest(url=saleurl, on_success=on_success, on_failure=on_failure, on_error=on_error, req_headers=headers, req_body=data_json)
             else:
-                return
+                self.manager.get_screen('posscreen').do_clear_item_list()
+                self.parent.current = "posscreen"
         except:
             print "Error: Could not load products"
+
+class CustomerScreen(Screen):
+    def select_customer(self):
+        try:
+            print("Select Customer")
+            # clear customer
+            config = ConfigParser.get_configparser(name='app')
+            print(config.get('serverconnection', 'server.url'))
+            saleurl = config.get('serverconnection', 'server.url') + "pos/sale/"
+        except:
+            print "Error: Could not load products"
+
+    def do_action(self, args):
+        print('Hurray button was ')
+        self.label_wid.text = args[0].text
+
 
 class ScreenManagement(ScreenManager):
     pass

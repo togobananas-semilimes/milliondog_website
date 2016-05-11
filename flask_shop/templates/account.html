@@ -57,7 +57,7 @@
   <p>Loop through the list:</p>
   <ul>
     {% for n in sale_list %}
-    <li>{{n.id, n.comment[0:50], n.payment_term, n.currency, n.shipment_method,
+    <li>{{n.id, n.comment, n.payment_term, n.currency, n.shipment_method,
       n.state, n.untaxed_amount_cache, n.warehouse, n.total_amount_cache,
       n.shipment_state, n.tax_amount_cache, n.invoice_state, n.invoice_method,
       n.invoice_address}}

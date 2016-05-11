@@ -1,10 +1,13 @@
 #: import FadeTransition kivy.uix.screenmanager.FadeTransition
+#: import ListAdapter kivy.adapters.listadapter.ListAdapter
+#: import ListItemButton kivy.uix.listview.ListItemButton
 
 ScreenManagement:
     transition: FadeTransition()
     MainScreen:
     POSScreen:
     PaymentScreen:
+    CustomerScreen:
 
 <MainScreen>:
     name: "main"
@@ -52,6 +55,87 @@ ScreenManagement:
         size_hint: .3, .1
         pos: (root.right - self.width) / 2, (root.top - self.height) / 2
 
+<CustomerScreen>:
+    label_wid: main_customer
+
+    name: "customerscreen"
+    canvas.before:
+        Color:
+            rgba: 0.6, 0.6, 0.6, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 0
+        BoxLayout:
+            id: customer_boxlayout
+            cols: 3
+            spacing: 10
+            size_hint: 1, 0.1
+            Button:
+                on_release: app.root.current = "posscreen"
+                text: "Set"
+                size_hint: .1, 1
+            Label:
+                id: main_customer
+                text: 'Customer1'
+                size_hint: .8, 1
+            Button:
+                on_release: app.root.current = "posscreen"
+                text: "Back"
+                size_hint: .1, 1
+        StackLayout:
+            id: my_stack_layout
+            orientation: 'lr-tb'
+            Button:
+                size_hint: None, 0.15
+                text: "customer1"
+                on_press: root.do_action(args)
+            Button:
+                size_hint: None, 0.15
+                text: "customer2"
+                on_release: root.do_action(args)
+            Button:
+                size_hint: None, 0.15
+                text: "customer3"
+                on_release: root.do_action(args)
+            Button:
+                size_hint: None, 0.15
+                text: "customer4"
+                on_release: root.do_action(args)
+            Button:
+                size_hint: None, 0.15
+                text: "customer5"
+                on_release: root.do_action(args)
+            Button:
+                size_hint: None, 0.15
+                text: "customer6"
+                on_release: root.do_action(args)
+            Button:
+                size_hint: None, 0.15
+                text: "customer7"
+                on_release: root.do_action(args)
+            Button:
+                size_hint: None, 0.15
+                text: "customer8"
+                on_release: root.do_action(args)
+            Button:
+                size_hint: None, 0.15
+                text: "customer9"
+                on_release: root.do_action(args)
+            Button:
+                size_hint: None, 0.15
+                text: "customer10"
+                on_release: root.do_action(args)
+            Button:
+                size_hint: None, 0.15
+                text: "customer11"
+                on_release: root.do_action(args)
+
+
+<ListItemButton>:
+    on_press: app.root.get_screen('posscreen').selection_change(*args)
 
 <POSScreen>:
     name: "posscreen"
@@ -68,7 +152,7 @@ ScreenManagement:
     text_input_wid: my_search_textinput
     tabbed_panel_wid: my_tabbed_panel
     scroll_view_wid: my_payslip_scroll_view
-    item_list_wid: my_payslip_list_view
+    list_view_wid: my_payslip_list
 
     BoxLayout:
         orientation: 'horizontal'
@@ -99,10 +183,28 @@ ScreenManagement:
                 text: 'items in list'
                 size_hint: 1, .6
                 ListView:
-                    id: my_payslip_list_view
-                    cols: 1
-                    spacing: 2
-                    size_hint_y: None
+                    id: my_payslip_list
+                    size_hint_y: .8
+                    adapter:
+                        ListAdapter(data=root.my_data,
+                        selection_mode='single',
+                        allow_empty_selection=False,
+                        cls=ListItemButton)
+                    canvas.before:
+                        Color:
+                            rgb: 1,.5,0
+                        Rectangle:
+                            pos: self.pos
+                            size: self.size
+            Label:
+                size_hint_y: .1
+                canvas.before:
+                    Color:
+                        rgb: 0,.5,1
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+                text: root.selected_value
             BoxLayout:
                 orientation: 'horizontal'
                 padding: 1
@@ -114,7 +216,7 @@ ScreenManagement:
                     Button:
                         text: 'Customer'
                         size_hint: 1, .2
-                        on_release: root.do_action()
+                        on_release: app.root.current = "customerscreen"
                     Button:
                         text: 'Payment'
                         size_hint: 1, .8

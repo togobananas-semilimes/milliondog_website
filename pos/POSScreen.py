@@ -15,6 +15,9 @@ from kivy.network.urlrequest import UrlRequest
 from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition
 import json
 import urllib2
+from kivy.clock import Clock
+from kivy.adapters.models import SelectableDataItem
+from kivy.properties import ListProperty, StringProperty
 #from escpos import *
 
 class ImageButton(ButtonBehavior, Image):
@@ -30,13 +33,18 @@ class POSScreen(Screen):
     '''
     label_wid = ObjectProperty()
     info = StringProperty()
-    list_adapter = ListAdapter(data=[], cls=ListItemButton, sorted_keys=[])
     products_list = []
     products_json = []
     payslip_items_list = []
+    my_data = ListProperty([])
+    selected_value = StringProperty('select a button')
 
     def __init__(self, **kwargs):
         super(Screen,self).__init__(**kwargs)
+        Clock.schedule_once(self.post_init, 0)
+
+    def post_init(self, *args):
+        print ('post_init...')
 
     def on_pre_enter(self, *args):
         def on_success(req, result):
@@ -53,6 +61,7 @@ class POSScreen(Screen):
                                   size_hint_y=None, width=300, height=100)
                 btn.bind(on_press=self.do_add_item)
                 self.products_list.append(btn)
+                print ('add online product ' + code)
                 self.grid_layout_wid.add_widget(btn)
             self.grid_layout_wid.height = (len(result['result'])/4+4)*100
 
@@ -66,6 +75,7 @@ class POSScreen(Screen):
                 return
         except:
             print "Error: Could not load products"
+        print "Initialize products selection"
         for key, val in self.ids.items():
             print("key={0}, val={1}".format(key, val))
         if len(self.products_list) > 0:
@@ -83,6 +93,7 @@ class POSScreen(Screen):
                                   size_hint_y=None, width=300, height=100)
                 btn.bind(on_press=self.do_add_item)
                 self.products_list.append(btn)
+                print ('add local product ' + code)
                 self.grid_layout_wid.add_widget(btn)
             self.grid_layout_wid.height = (len(result['result'])/4+4)*100
 
@@ -117,10 +128,9 @@ class POSScreen(Screen):
         return
 
     def do_clear_item_list(self):
-        for i in self.payslip_items_list:
-            self.payslip_items_list.remove(i)
-        del self.list_adapter.data[:]
-        self.item_list_wid.height = self.height * 0.6
+        print('do_clear_item_list')
+        del self.my_data[:]
+        self.list_view_wid.height = self.height * 0.6
 
     def do_add_item(self, event):
         print('Add product button <%s> state is <%s>' % (self, event))
@@ -129,21 +139,24 @@ class POSScreen(Screen):
             newitem = event.id + " " + product['price'] + " " + product['id'] + " " + product['name']
         else:
             newitem = event.id
-        self.payslip_items_list.append(newitem)
+        print('append item')
+        self.my_data.append(newitem)
+        print('payslip items')
+        #self.payslip_items_list = self.item_list_wid.adapter.data
         if (len(self.payslip_items_list) > 10):
-            self.item_list_wid.height = (len(self.payslip_items_list)+4) * 15
+            self.list_view_wid.height = (len(self.payslip_items_list)+4) * 15
         else:
-            self.item_list_wid.height = self.height * 0.6
-        self.list_adapter = ListAdapter(data=self.payslip_items_list, cls=ListItemButton, sorted_keys=[])
-        self.list_adapter.bind(on_selection_change=self.selection_change)
-        self.item_list_wid.add_widget(ListView(adapter=self.list_adapter))
+            self.list_view_wid.height = self.height * 0.6
+        print('do_add_item finished.')
 
-    def selection_change(self, adapter, *args):
+
+    def selection_change(self, change):
         print("selection_change")
+        self.selected_value = 'Selected: {}'.format(change.text)
 
     def do_action(self):
         print('Hurray button was ')
-        self.label_wid.text = 'My label after button press'
+        self.label_wid.text = 'Not yet implemented'
         self.info = 'New info text'
 
     def build(self):
