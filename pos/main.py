@@ -3,17 +3,26 @@ from kivy.lang import Builder
 from kivy.config import ConfigParser
 from POSScreen import *
 
+
 class MainScreen(Screen):
     pass
 
+
 class PaymentScreen(Screen):
+    def getProduct(self, productstr):
+        product_json = self.manager.get_screen('posscreen').products_json
+        code = productstr.split()[0]
+        for p in product_json['result']:
+            if p['code'] == code:
+                return p
+
     def pay(self):
         def on_success(req, result):
-            with open('products.json', 'w') as fp:
+            with open('sale.json', 'w') as fp:
                 json.dump(result, fp)
                 fp.close()
-            self.products_json = result
-            print ('on_success: products loaded.')
+            self.sale_json = result
+            print ('on_success: sale returned.')
             self.manager.get_screen('posscreen').do_clear_item_list()
             self.parent.current = "posscreen"
 
@@ -29,17 +38,20 @@ class PaymentScreen(Screen):
             self.manager.get_screen('posscreen').do_clear_item_list()
             self.parent.current = "posscreen"
 
-
         try:
             print("Pay and clear list")
+            payslip_json = []
             payslip_positions = self.manager.get_screen('posscreen').my_data
             for i in payslip_positions:
                 print("selling: " + i)
+                next_element = self.getProduct(i)
+                if next_element is not None:
+                    payslip_json.append(next_element)
             # clear list
             config = ConfigParser.get_configparser(name='app')
             print(config.get('serverconnection', 'server.url'))
             saleurl = config.get('serverconnection', 'server.url') + "pos/sale/"
-            data_json = json.dumps(payslip_positions)
+            data_json = json.dumps(payslip_json)
             headers = {'Content-type': 'application/jsonrequest', 'Accept': 'application/jsonrequest'}
             if len(self.manager.get_screen('posscreen').my_data) > 0:
                 UrlRequest(url=saleurl, on_success=on_success, on_failure=on_failure, on_error=on_error, req_headers=headers, req_body=data_json)

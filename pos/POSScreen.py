@@ -35,6 +35,7 @@ class POSScreen(Screen):
     info = StringProperty()
     products_list = []
     products_json = []
+    sale_json = []
     payslip_items_list = []
     my_data = ListProperty([])
     selected_value = StringProperty('select a button')
