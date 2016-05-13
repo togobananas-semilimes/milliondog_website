@@ -16,7 +16,6 @@ from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition
 import json
 import urllib2
 from kivy.clock import Clock
-from kivy.adapters.models import SelectableDataItem
 from kivy.properties import ListProperty, StringProperty
 #from escpos import *
 

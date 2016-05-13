@@ -5,16 +5,19 @@ from flask_shop import app
 from .forms import LoginForm, ContactForm, CheckoutForm
 from proteus import config, Model, Wizard, Report
 from flask.ext.babel import gettext, refresh
-from flask_shop import babel
+from flask.ext.sqlalchemy import SQLAlchemy
+from flask_shop import babel, models
 from .models import User
 from werkzeug.datastructures import ImmutableOrderedMultiDict
 import time
 import requests
+import json
 from decimal import *
 
 CONFIG = "./tryton.conf"
 DATABASE_NAME = "tryton_dev"
 config.set_trytond(DATABASE_NAME, config_file=CONFIG)
+
 
 @babel.localeselector
 def get_locale():
@@ -79,19 +82,56 @@ def product(productid=None):
 
 @app.route("/shop/")
 def shop():
+    print("Shop ")
     page_topic = gettext(u'Shop')
     page_content = gettext(u'Shop:')
-    config.set_trytond(DATABASE_NAME, config_file=CONFIG)
+
+    '''    config.set_trytond(DATABASE_NAME, config_file=CONFIG)
+    start = time.time()
     Product = Model.get('product.product')
     product = Product.find(['id', '>=', '0'])
-    Attachments = Model.get('ir.attachment')
-    Template = Model.get('product.template')
-    attachmentlist = []
-    for n in product:
-        template = Template.find(['id', '=', n.id])
-        for a in template:
-            attachmentlist.extend(Attachments.find(['resource', '=', 'product.template,'+str(a.id)]))
-    return render_template('shop.html', pt=page_topic, pc=page_content, db_model='Products', db_list=product, attachments=attachmentlist, title="Milliondog", page=gettext('Shop'))
+    productlist = []
+
+    for p in product:
+        temp = dict()
+        temp['id'] = p.id
+        temp['code'] = p.code
+        temp['name'] = p.name
+        temp['description'] = p.description
+        temp['list_price'] = p.list_price
+        if p.categories:
+            categories = []
+            tempc = dict()
+            for category in p.categories:
+                tempc['id'] = category.id
+                tempc['name'] = category.name
+                if category.parent:
+                    tempc['parent'] = category.parent.id
+                categories.append(tempc)
+            temp['categories'] = categories
+        productlist.append(temp)
+
+    end = time.time()
+    print("Shop.product " + str(end - start))
+    start = time.time()
+    resp = render_template('shop.html', pt=page_topic, pc=page_content, db_model='Products', db_list=productlist,
+                           title="Milliondog", page=gettext('Shop'))
+    end = time.time()
+    print("Shop.render_template " + str(end - start))
+    '''
+    start = time.time()
+    fastproducts = models.Product.query.all()
+    for p in fastproducts:
+        if p.attributes is not None:
+            #print(p.attributes)
+            json_acceptable_string = p.attributes.replace("'", "\"")
+            p.attributes = json.loads(json_acceptable_string)
+        #print(p.id, p.code)
+    end = time.time()
+    print("Shop.fast_products " + str(end - start))
+    resp = render_template('shop.html', pt=page_topic, pc=page_content, db_model='Products', db_list=fastproducts,
+                           title="Milliondog", page=gettext('Shop'))
+    return resp
 
 @app.route("/gallery/")
 def gallery():

@@ -1,3 +1,20 @@
+from flask_shop import app
+
+
+class Product(app.db.Model):
+    __tablename__ = 'product_product'
+    id = app.db.Column(app.db.Integer, primary_key=True)
+    #name = app.db.Column(app.db.String(64), unique=False)
+    code = app.db.Column(app.db.String(64), unique=False)
+    description = app.db.Column(app.db.String(64), unique=False)
+    #list_price = app.db.Column(app.db.Numeric, unique=False)
+    attributes = app.db.Column(app.db.Text, unique=False)
+    #categories = db.relationship('product.category', lazy='dynamic')
+
+    def __repr__(self):
+        return '<Product %r>' % self.id
+
+
 class User():
     id = None
     nickname = None

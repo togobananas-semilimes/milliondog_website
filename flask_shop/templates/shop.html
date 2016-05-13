@@ -9,32 +9,26 @@
   <br>
       <p>{{ pc |safe }}</p>
   <p>My string: {{db_model}}</p>
-  <p>Loop through the list:</p>
+  <p>Loop through the list {{ db_list.length }}:</p>
   <ul>
     {% for n in db_list %}
-    <li><a href="/product/{{n.id}}">Details</a> &nbsp; <a href="/cart/add/{{n.id}}">Buy</a>{{n.id, n.code, n.name, n.description, n.list_price}}
+    <li>
+      <a href="/product/{{n.id}}">Details</a> &nbsp;
+      <a href="/cart/add/{{n.id}}">Buy</a>{{n.id, n.code, n.description, n.attributes}}
       {% if n.attributes %}
         <br><img src="/static/products/{{ n.attributes['image_tn'] }}">
         <ul>
           <li>{{ n.attributes['serial_number'] }}</li>
-          <li>{{ n.attributes['shop_description'] }}</li>
           <li>{{ n.attributes['pattern'] }}</li>
           <li>{{ n.attributes['color'] }}</li>
           <li>{{ n.attributes['size'] }}</li>
         </ul>
       {% endif %}
       <ul>
-      {% for o in n.categories %}
-      <li>{{o.id, o.name, o.parent}}</li>
-      {% endfor %}
-        </ul>
-    </li>
-    {% endfor %}
-  </ul>
-  <ul>
-    {% for n in attachments %}
-    <li>
-      {{n.id, n.type, n.link, n.resource}}
+        {% for o in n.categories %}
+        <li>{{o.id, o.name, o.parent}}</li>
+        {% endfor %}
+      </ul>
     </li>
     {% endfor %}
   </ul>

@@ -1,15 +1,18 @@
 from flask import Flask, g
 from flask.ext.login import LoginManager
 from flask.ext.babel import Babel
+from flask.ext.sqlalchemy import SQLAlchemy
 from flask.json import JSONEncoder
-
 
 app = Flask(__name__)
 app.config.from_object('config')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.db = SQLAlchemy(app)
 babel = Babel(app)
 lm = LoginManager()
 lm.init_app(app)
 from flask_shop import views
+from flask_shop import models
 from flask_shop import server
 
 class CustomJSONEncoder(JSONEncoder):
