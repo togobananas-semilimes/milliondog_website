@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-from flask_shop import app
+from flask_shop import app, models
 from flask import Flask, jsonify, request
 from proteus import config, Model, Wizard, Report
 import time
 import decimal
+import json
 from escpos import *
 
 CONFIG = "./tryton.conf"
@@ -14,6 +15,11 @@ config.set_trytond(DATABASE_NAME, config_file=CONFIG)
 @app.route("/pos/products/", methods=['GET'])
 def get_products():
     config.set_trytond(DATABASE_NAME, config_file=CONFIG)
+    fastproducts = models.Product.query.all()
+    list = []
+    for p in fastproducts:
+        list.append({'id': str(p.id), 'code': p.code, 'name': p.description, 'price': '50.00'})
+    '''
     Product = Model.get('product.product')
     product = Product.find(['id', '>=', '11'])
     list = []
@@ -21,6 +27,7 @@ def get_products():
     Template = Model.get('product.template')
     for n in product:
         list.append({'id': str(n.id), 'code': n.code, 'name': n.name, 'price': str(n.list_price)})
+    '''
     return jsonify(result=list)
 
 
