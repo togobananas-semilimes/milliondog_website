@@ -6,6 +6,7 @@ from .forms import LoginForm, ContactForm, CheckoutForm
 from proteus import config, Model, Wizard, Report
 from flask.ext.babel import gettext, refresh
 from flask.ext.sqlalchemy import SQLAlchemy
+from sqlalchemy import and_
 from flask_shop import babel, models
 from .models import User
 from werkzeug.datastructures import ImmutableOrderedMultiDict
@@ -13,11 +14,41 @@ import time
 import requests
 import json
 from decimal import *
+import psycopg2
 
 CONFIG = "./tryton.conf"
 DATABASE_NAME = "tryton_dev"
 config.set_trytond(DATABASE_NAME, config_file=CONFIG)
 
+def getProductDirect():
+    con = None
+    result = None
+    try:
+        con = psycopg2.connect(database='tryton_dev', user='tryton', password='max')
+        cur = con.cursor()
+        cur.execute("SELECT product.id, product.code, product.description, t.name, product.template, product.attributes, t.sale_uom, trim(p.value, ',') as list_price from product_product product, product_template t, ir_property p where product.template = t.id and p.res = 'product.template,'||t.id and p.field = 757 order by product.id")
+        resultset = cur.fetchall()
+        result = []
+        for p in resultset:
+            row = dict([])
+            row['id'] = p[0]
+            row['code'] = p[1]
+            row['description'] = p[2]
+            row['name'] = p[3]
+            row['template'] = p[4]
+            if p[5] is not None:
+                json_acceptable_string = p[5].replace("'", "\"")
+                row['attributes'] = json.loads(json_acceptable_string)
+            row['sale_uom'] = p[6]
+            row['list_price'] = p[7]
+            result.append(row)
+        print result
+    except psycopg2.DatabaseError, e:
+        print 'Error %s' % e
+    finally:
+        if con:
+            con.close()
+    return result
 
 @babel.localeselector
 def get_locale():
@@ -121,15 +152,12 @@ def shop():
     '''
     start = time.time()
     fastproducts = models.Product.query.all()
-    for p in fastproducts:
-        if p.attributes is not None:
-            #print(p.attributes)
-            json_acceptable_string = p.attributes.replace("'", "\"")
-            p.attributes = json.loads(json_acceptable_string)
-        #print(p.id, p.code)
+    attr = dict([])
+    list_price = dict([])
     end = time.time()
     print("Shop.fast_products " + str(end - start))
-    resp = render_template('shop.html', pt=page_topic, pc=page_content, db_model='Products', db_list=fastproducts,
+    directproducts = getProductDirect()
+    resp = render_template('shop.html', pt=page_topic, pc=page_content, db_model='Products', db_list=directproducts,
                            title="Milliondog", page=gettext('Shop'))
     return resp
 

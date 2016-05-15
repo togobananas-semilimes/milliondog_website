@@ -14,7 +14,7 @@
     {% for n in db_list %}
     <li>
       <a href="/product/{{n.id}}">Details</a> &nbsp;
-      <a href="/cart/add/{{n.id}}">Buy</a>{{n.id, n.code, n.description, n.attributes}}
+      <a href="/cart/add/{{n.id}}">Buy</a>{{n.id, n.code, n.description, n.name, n.template, n.attributes, n.list_price}}
       {% if n.attributes %}
         <br><img src="/static/products/{{ n.attributes['image_tn'] }}">
         <ul>

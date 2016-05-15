@@ -6,28 +6,60 @@ import time
 import decimal
 import json
 from escpos import *
+import psycopg2
 
 CONFIG = "./tryton.conf"
 DATABASE_NAME = "tryton_dev"
 config.set_trytond(DATABASE_NAME, config_file=CONFIG)
 
+def getProductDirect():
+    con = None
+    result = None
+    try:
+        con = psycopg2.connect(database='tryton_dev', user='tryton', password='max')
+        cur = con.cursor()
+        cur.execute("SELECT product.id, product.code, product.description, t.name, product.template, product.attributes, t.sale_uom, trim(p.value, ',') as list_price from product_product product, product_template t, ir_property p where product.template = t.id and p.res = 'product.template,'||t.id and p.field = 757 order by product.id")
+        resultset = cur.fetchall()
+        result = []
+        for p in resultset:
+            row = dict([])
+            row['id'] = p[0]
+            row['code'] = p[1]
+            row['description'] = p[2]
+            row['name'] = p[3]
+            row['template'] = p[4]
+            if p[5] is not None:
+                json_acceptable_string = p[5].replace("'", "\"")
+                row['attributes'] = json.loads(json_acceptable_string)
+            row['sale_uom'] = p[6]
+            row['list_price'] = p[7]
+            result.append(row)
+        print result
+    except psycopg2.DatabaseError, e:
+        print 'Error %s' % e
+    finally:
+        if con:
+            con.close()
+    return result
+
+@app.route("/pos/customers/", methods=['GET'])
+def get_customers():
+    config.set_trytond(DATABASE_NAME, config_file=CONFIG)
+    customers = models.Customer.query.all()
+    list = []
+    for c in customers:
+        list.append({'id': str(c.id), 'city': c.city, 'name': c.name, 'zip': c.zip, 'country': c.country,
+                     'subdivision': c.subdivision, 'street': c.street, 'streetbis': c.streetbis, 'active': c.active,
+                     'delivery': c.delivery, 'invoice': c.invoice })
+    return jsonify(result=list)
+
 
 @app.route("/pos/products/", methods=['GET'])
 def get_products():
-    config.set_trytond(DATABASE_NAME, config_file=CONFIG)
-    fastproducts = models.Product.query.all()
+    products = getProductDirect()
     list = []
-    for p in fastproducts:
-        list.append({'id': str(p.id), 'code': p.code, 'name': p.description, 'price': '50.00'})
-    '''
-    Product = Model.get('product.product')
-    product = Product.find(['id', '>=', '11'])
-    list = []
-    Attachments = Model.get('ir.attachment')
-    Template = Model.get('product.template')
-    for n in product:
-        list.append({'id': str(n.id), 'code': n.code, 'name': n.name, 'price': str(n.list_price)})
-    '''
+    for p in products:
+        list.append({'id': p['id'], 'code': p['code'], 'name': p['name'], 'price': p['list_price']})
     return jsonify(result=list)
 
 
