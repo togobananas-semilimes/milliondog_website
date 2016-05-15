@@ -35,6 +35,7 @@ class POSScreen(Screen):
     products_list = []
     products_json = []
     sale_json = []
+    customerid = 0
     payslip_items_list = []
     my_data = ListProperty([])
     selected_value = StringProperty('select a button')
@@ -136,7 +137,7 @@ class POSScreen(Screen):
         print('Add product button <%s> state is <%s>' % (self, event))
         product = self.getProduct(event.id)
         if product is not None:
-            newitem = event.id + " " + product['price'] + " " + product['id'] + " " + product['name']
+            newitem = event.id + " " + product['price'] + " " + str(product['id']) + " " + product['name']
         else:
             newitem = event.id
         print('append item')

@@ -40,13 +40,18 @@ class PaymentScreen(Screen):
 
         try:
             print("Pay and clear list")
-            payslip_json = []
+            payslip_json = dict([])
             payslip_positions = self.manager.get_screen('posscreen').my_data
+            customer = dict([])
+            customer['customerid'] = self.manager.get_screen('posscreen').customerid
+            payslip_json['customer'] = customer
+            payslip_items = []
             for i in payslip_positions:
                 print("selling: " + i)
                 next_element = self.getProduct(i)
                 if next_element is not None:
-                    payslip_json.append(next_element)
+                    payslip_items.append(next_element)
+            payslip_json['items'] = payslip_items
             # clear list
             config = ConfigParser.get_configparser(name='app')
             print(config.get('serverconnection', 'server.url'))
@@ -62,19 +67,33 @@ class PaymentScreen(Screen):
             print "Error: Could not load products"
 
 class CustomerScreen(Screen):
-    def select_customer(self):
+    def on_pre_enter(self):
+        def on_success(req, result):
+            with open('customers.json', 'w') as fp:
+                json.dump(result, fp)
+                fp.close()
+            self.products_json = result
+            print ('customers loaded.')
+            for i in result['result']:
+                btn = Button(id=str(i['id']), text=i['name'], size_hint_y=None, width=200, height=20)
+                btn.bind(on_press=self.do_action)
+                print ('add customer ' + str(i['id']))
+                self.customer_list_wid.add_widget(btn)
+
         try:
             print("Select Customer")
             # clear customer
             config = ConfigParser.get_configparser(name='app')
             print(config.get('serverconnection', 'server.url'))
-            saleurl = config.get('serverconnection', 'server.url') + "pos/sale/"
+            customerurl = config.get('serverconnection', 'server.url') + "pos/customers/"
+            UrlRequest(customerurl, on_success)
         except:
             print "Error: Could not load products"
 
-    def do_action(self, args):
+    def do_action(self, event):
         print('Hurray button was ')
-        self.label_wid.text = args[0].text
+        self.label_wid.text = event.id
+        self.manager.get_screen('posscreen').customerid = event.id
 
 
 class ScreenManagement(ScreenManager):

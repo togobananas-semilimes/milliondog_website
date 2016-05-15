@@ -57,6 +57,7 @@ ScreenManagement:
 
 <CustomerScreen>:
     label_wid: main_customer
+    customer_list_wid: my_stack_layout
 
     name: "customerscreen"
     canvas.before:
@@ -79,7 +80,7 @@ ScreenManagement:
                 size_hint: .1, 1
             Label:
                 id: main_customer
-                text: 'Customer1'
+                text: 'default (0)'
                 size_hint: .8, 1
             Button:
                 on_release: app.root.current = "posscreen"
@@ -88,50 +89,6 @@ ScreenManagement:
         StackLayout:
             id: my_stack_layout
             orientation: 'lr-tb'
-            Button:
-                size_hint: None, 0.15
-                text: "customer1"
-                on_press: root.do_action(args)
-            Button:
-                size_hint: None, 0.15
-                text: "customer2"
-                on_release: root.do_action(args)
-            Button:
-                size_hint: None, 0.15
-                text: "customer3"
-                on_release: root.do_action(args)
-            Button:
-                size_hint: None, 0.15
-                text: "customer4"
-                on_release: root.do_action(args)
-            Button:
-                size_hint: None, 0.15
-                text: "customer5"
-                on_release: root.do_action(args)
-            Button:
-                size_hint: None, 0.15
-                text: "customer6"
-                on_release: root.do_action(args)
-            Button:
-                size_hint: None, 0.15
-                text: "customer7"
-                on_release: root.do_action(args)
-            Button:
-                size_hint: None, 0.15
-                text: "customer8"
-                on_release: root.do_action(args)
-            Button:
-                size_hint: None, 0.15
-                text: "customer9"
-                on_release: root.do_action(args)
-            Button:
-                size_hint: None, 0.15
-                text: "customer10"
-                on_release: root.do_action(args)
-            Button:
-                size_hint: None, 0.15
-                text: "customer11"
-                on_release: root.do_action(args)
 
 
 <ListItemButton>:
