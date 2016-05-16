@@ -267,7 +267,7 @@ def setcurrency(currency=None):
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        is_valid = validate_email(form.email.data)
+        is_valid = validate_email(form.email.data, check_mx=True)
         if is_valid:
             flash('Login requested for name="%s", remember_me=%s' %
                   (form.email.data, str(form.remember_me.data)))
@@ -301,7 +301,7 @@ def login():
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
-        is_valid = validate_email(form.email.data)
+        is_valid = validate_email(form.email.data, check_mx=True)
         if is_valid:
             config.set_trytond(DATABASE_NAME, config_file=CONFIG)
             User = Model.get('res.user')
