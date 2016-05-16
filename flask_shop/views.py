@@ -233,6 +233,22 @@ def cart_add(productid=None):
 
 @app.route('/account/')
 def account():
+    try:
+        userid = session['userid']
+    except KeyError:
+        return redirect("/login")
+
+    config.set_trytond(DATABASE_NAME, config_file=CONFIG)
+    User = Model.get('res.user')
+    user = User.find(['id', '=', userid])
+    Sale = Model.get('sale.sale')
+    party = user[0].name.split(",")    # user.name = 'party,3'
+    salelist = Sale.find(['party', '=', int(party[1])])
+    return render_template('account.html', message=user[0].name,
+                           id=user[0].id, sale_list=salelist, title="Milliondog", page='Account')
+
+@app.route('/admin/')
+def admin():
     config.set_trytond(DATABASE_NAME, config_file=CONFIG)
     User = Model.get('res.user')
     user = User.find(['id', '=', '1'])
@@ -267,7 +283,7 @@ def setcurrency(currency=None):
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        is_valid = validate_email(form.email.data, check_mx=True)
+        is_valid = validate_email(form.email.data)
         if is_valid:
             flash('Login requested for name="%s", remember_me=%s' %
                   (form.email.data, str(form.remember_me.data)))
@@ -276,15 +292,17 @@ def login():
             user = User.find(['login', '=', form.email.data])
             if user:
                 passwordhash = user[0].password_hash
-                print('User found: ' + user[0].name)
+                print('User found: ' + user[0].login)
                 start = time.time()
                 is_valid = pbkdf2_sha256.verify(form.password.data, passwordhash)
                 end = time.time()
                 if is_valid:
                     flash(gettext(u'login successful.'))
                     print('login successful in ' + str(end-start) + ' msec.')
-                    session['email'] = user[0].name
+                    session['email'] = user[0].email
                     session['userid'] = user[0].id
+                    session['partyid'] = user[0].name.split(",")[1]
+                    session['logged_in'] = True
                 else:
                     flash(gettext(u'invalid email or password.'))
                     print('login failed: invalid password')
@@ -301,7 +319,7 @@ def login():
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
-        is_valid = validate_email(form.email.data, check_mx=True)
+        is_valid = validate_email(form.email.data)
         if is_valid:
             config.set_trytond(DATABASE_NAME, config_file=CONFIG)
             User = Model.get('res.user')
@@ -318,13 +336,24 @@ def register():
                 if user.id < 0:
                     session['email'] = form.email.data
                     passwordhash = pbkdf2_sha256.encrypt(form.password.data, rounds=100000, salt_size=64)
-                    user.name = form.email.data
                     user.login = form.email.data
                     user.password_hash = passwordhash
                     user.email = form.email.data
+                    Party = Model.get('party.party')
+                    party = Party()
+                    party.name = form.name.data
+                    Lang = Model.get('ir.lang')
+                    (en,) = Lang.find([('code', '=', 'en_US')])
+                    party.lang = en
+                    party.save()
+                    user.name = 'party,' + str(party.id)
                     user.save()
                     flash('Registration successful for email="%s", remember_me=%s' %
-                      (form.email.data, str(form.remember_me.data)))
+                          (form.email.data, str(form.remember_me.data)))
+                    session['email'] = user.email
+                    session['partyid'] = party.id
+                    session['userid'] = user.id
+                    session['logged_in'] = True
                 else:
                     flash(gettext(u'System is down.'))
                     print('Cannot register email ' + form.email.data)
@@ -365,17 +394,36 @@ def checkout():
     config.set_trytond(DATABASE_NAME, config_file=CONFIG)
     page_topic = gettext(u'Checkout')
     page_content = gettext(u'Please enter your address here:')
-    product = getProductFromSession()
+    productlist = getProductFromSession()
     form = CheckoutForm()
     if form.validate_on_submit():
-        Party = Model.get('party.party')
-        party = Party()
-        if (party.id < 0):
+        try:
+            partyid = session['partyid']
+            Party = Model.get('party.party')
+            party = Party.find([('id', '=', partyid)])[0]
+        except KeyError:
+            Party = Model.get('party.party')
+            party = Party()
+
+        if party.id < 0:
             party.name = form.name.data
             Lang = Model.get('ir.lang')
             (en,) = Lang.find([('code', '=', 'en_US')])
             party.lang = en
-            party.addresses[0].name = form.name2.data
+            party.addresses[0].name = form.name.data
+            party.addresses[0].street = form.street.data
+            party.addresses[0].streetbis = form.street2.data
+            party.addresses[0].zip = form.zip.data
+            party.addresses[0].city = form.city.data
+            Country = Model.get('country.country')
+            (ch, ) = Country.find([('code', '=', 'CH')])
+            party.addresses[0].country = ch
+            # address.subdivision = None
+            party.addresses[0].invoice = form.invoice.data
+            party.addresses[0].delivery = form.delivery.data
+            party.save()
+        else:
+            party.addresses[0].name = form.name.data
             party.addresses[0].street = form.street.data
             party.addresses[0].streetbis = form.street2.data
             party.addresses[0].zip = form.zip.data
@@ -388,37 +436,74 @@ def checkout():
             party.addresses[0].delivery = form.delivery.data
             party.save()
 
-            Sale = Model.get('sale.sale')
-            sale = Sale()
-            if (sale.id < 0):
-                sale.party = party
-                Paymentterm = Model.get('account.invoice.payment_term')
-                paymentterm = Paymentterm.find([('name', '=', 'cash')])
-                sale.payment_term = paymentterm[0]
+        Sale = Model.get('sale.sale')
+        sale = Sale()
+        if (sale.id < 0):
+            sale.party = party
+            Paymentterm = Model.get('account.invoice.payment_term')
+            paymentterm = Paymentterm.find([('name', '=', 'cash')])
+            sale.payment_term = paymentterm[0]
+            for p in productlist:
                 line = sale.lines.new(quantity=1)
-                line.product = product[0]
-                line.description = product[0].name
+                line.product = p
+                line.description = p.name + ' - ' + p.code
                 line.quantity = 1
                 line.sequence = 1
-                sale.save()
-                session['sale_id'] = sale.id
+            sale.save()
+            session['sale_id'] = sale.id
         flash('Checkout started successfully name="%s", name2=%s, saleid=%s' %
               (form.name.data, str(form.name2.data), sale.id))
 
         return redirect('/payment')
+
+    if form.name.data is None:
+        try:
+            partyid = session['partyid']
+            Party = Model.get('party.party')
+            party = Party.find([('id', '=', partyid)])[0]
+            form.name.data = party.addresses[0].name
+            form.street.data = party.addresses[0].street
+            form.street2.data = party.addresses[0].streetbis
+            form.zip.data = party.addresses[0].zip
+            form.city.data = party.addresses[0].city
+            form.invoice.data = party.addresses[0].invoice
+            form.delivery.data = party.addresses[0].delivery
+        except KeyError:
+            print('user is not logged in')
+
     return render_template('checkout.html',
-                           pt=page_topic, pc=page_content, product=product, title="Milliondog", page=gettext(u'Checkout'),
-                           form=form)
+                           pt=page_topic, pc=page_content, product=productlist, title="Milliondog",
+                           page=gettext(u'Checkout'), form=form)
 
 
 #Paypal
 @app.route('/payment/')
 def payment():
     try:
-        session['logged_in'] = 'user1'
         page_topic = gettext(u'Payment')
         page_content = gettext(u'Please follow the link to pay with Paypal:')
-        return render_template("payment.html", pt=page_topic, pc=page_content, title="Milliondog", page=gettext(u'Payment'))
+        custom = session['sale_id']
+        products = getProductFromSession()
+        item_name_list = []
+        item_number_list = []
+        amount_list = []
+        for p in products:
+            item_name_list.append(p.name)
+            item_number_list.append(p.code)
+            amount_list.append(p.list_price)
+        business = "express3.com-facilitator@gmail.com"
+        item_name = ', '.join(item_name_list)
+        item_number = ', '.join(item_number_list)
+        no_shipping = "0"
+        TWOPLACES = Decimal(10) ** -2
+        amount = (sum(amount_list)).quantize(TWOPLACES, context=Context(traps=[Inexact]))
+        currency_code = "CHF"
+        shipping_cost = "3.50"
+        hostname = "http://85.7.120.190:5000"
+        return render_template("payment.html", pt=page_topic, pc=page_content, title="Milliondog",
+                               page=gettext(u'Payment'), custom=custom, business=business, item_name=item_name,
+                               item_number=item_number, no_shipping=no_shipping, amount=amount,
+                               currency_code=currency_code, shipping=shipping_cost, hostname=hostname)
     except Exception, e:
         return(str(e))
 
