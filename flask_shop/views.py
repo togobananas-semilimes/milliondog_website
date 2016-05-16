@@ -4,18 +4,16 @@ from flask_login import login_required, current_user
 from flask_shop import app
 from .forms import LoginForm, ContactForm, CheckoutForm
 from proteus import config, Model, Wizard, Report
-from flask.ext.babel import gettext, refresh
+from flask_babel import gettext, refresh
 from flask_mail import Message
-from flask.ext.sqlalchemy import SQLAlchemy
-from sqlalchemy import and_
 from flask_shop import babel, models
-from .models import User
 from werkzeug.datastructures import ImmutableOrderedMultiDict
 import time
 import requests
 import json
 from decimal import *
 import psycopg2
+from passlib.hash import pbkdf2_sha256
 
 CONFIG = "./tryton.conf"
 DATABASE_NAME = "tryton_dev"
@@ -269,7 +267,21 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         flash('Login requested for name="%s", remember_me=%s' %
-              (form.name.data, str(form.remember_me.data)))
+              (form.name.data, str(form.name.data)))
+        config.set_trytond(DATABASE_NAME, config_file=CONFIG)
+        User = Model.get('res.user')
+        user = User.find(['login', '=', form.name.data])
+        if user:
+            print('User found: ' + user[0].name)
+        else:
+            print('No user found with login ' + form.name.data)
+        start = time.time()
+        hash = pbkdf2_sha256.encrypt(form.password.data, rounds=100000, salt_size=64)
+        end = time.time()
+        print('password hash for user ' + form.name.data + ': ' + hash)
+        if pbkdf2_sha256.verify(form.password.data, hash):
+            end2 = time.time()
+            print('login successful in ' + str(end-start) + ' msec, verify in ' + str(end2 - end) + " msec.")
         return redirect('/index')
     return render_template('login.html',
                            title="Milliondog", page=gettext('Sign in'), form=form)
@@ -289,11 +301,10 @@ def contact():
         msg = Message("Neue Nachricht über milliondog.com Kontaktformular",
                   sender="milliondog.com@gmail.com",
                   recipients=["milliondog.com@gmail.com"])
-        msg.body = ('Name: %s\nEmail: %s\nBetreff: %s\n Nachricht: %s\n Sicherheitsantwort: %s' %
-                    (form.name.data, form.email.data, form.subject.data, form.message.data, form.answer.data))
-        msg.html = ('<b>Formularfelder</b><br>Name: %s<br>Email: %s<br>Betreff: %s<br> Nachricht: %s'
-                    '<br> Sicherheitsantwort: %s<br>' %
-                    (form.name.data, form.email.data, form.subject.data, form.message.data, form.answer.data))
+        msg.body = ('Name: %s\nEmail: %s\nBetreff: %s\n Nachricht: %s\n' %
+                    (form.name.data, form.email.data, form.subject.data, form.message.data))
+        msg.html = ('<b>Formularfelder</b><br>Name: %s<br>Email: %s<br>Betreff: %s<br> Nachricht: %s<br>' %
+                    (form.name.data, form.email.data, form.subject.data, form.message.data))
         app.mail.send(msg)
     return render_template('contact.html',
                            pt=page_topic, pc=page_content, title="Milliondog", page=gettext(u'Contact'),

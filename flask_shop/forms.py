@@ -1,10 +1,12 @@
-from flask.ext.wtf import Form
-from wtforms import StringField, BooleanField
+from flask_wtf import Form
+from wtforms import StringField, BooleanField, PasswordField, TextAreaField
 from wtforms.validators import DataRequired
 
 class LoginForm(Form):
     name = StringField('name', validators=[DataRequired()])
+    password = PasswordField('password', validators=[DataRequired()])
     remember_me = BooleanField('remember_me', default=False)
+    answer = StringField('answer', validators=[DataRequired()])
 
 class CheckoutForm(Form):
     name = StringField('name', validators=[DataRequired()])
@@ -22,5 +24,5 @@ class ContactForm(Form):
     name = StringField('name', validators=[DataRequired()])
     email = StringField('email', validators=[DataRequired()])
     subject = StringField('subject', validators=[DataRequired()])
-    message = StringField('message', validators=[DataRequired()])
+    message = TextAreaField('message', validators=[DataRequired()])
     answer = StringField('answer', validators=[DataRequired()])

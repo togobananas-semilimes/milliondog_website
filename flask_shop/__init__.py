@@ -1,7 +1,7 @@
 from flask import Flask, g
-from flask.ext.login import LoginManager
-from flask.ext.babel import Babel
-from flask.ext.sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
+from flask_babel import Babel
+from flask_sqlalchemy import SQLAlchemy
 from flask.json import JSONEncoder
 from flask_mail import Mail
 
