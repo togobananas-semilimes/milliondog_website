@@ -5,6 +5,7 @@ from flask_shop import app
 from .forms import LoginForm, ContactForm, CheckoutForm
 from proteus import config, Model, Wizard, Report
 from flask.ext.babel import gettext, refresh
+from flask_mail import Message
 from flask.ext.sqlalchemy import SQLAlchemy
 from sqlalchemy import and_
 from flask_shop import babel, models
@@ -26,7 +27,7 @@ def getProductDirect():
     try:
         con = psycopg2.connect(database='tryton_dev', user='tryton', password='max')
         cur = con.cursor()
-        cur.execute("SELECT product.id, product.code, product.description, t.name, product.template, product.attributes, t.sale_uom, trim(p.value, ',') as list_price from product_product product, product_template t, ir_property p where product.template = t.id and p.res = 'product.template,'||t.id and p.field = 757 order by product.id")
+        cur.execute("SELECT product.id, product.code, product.description, t.name, product.template, product.attributes, t.sale_uom, trim(p.value, ',') as list_price from product_product product, product_template t, ir_property p where product.code <> '' and product.template = t.id and p.res = 'product.template,'||t.id and p.field = 757 order by product.id")
         resultset = cur.fetchall()
         result = []
         for p in resultset:
@@ -73,12 +74,16 @@ def before_request():
 
 def getProductFromSession():
     try:
-        if session['productid'] is not None:
+        cart = session['cart']
+        products = []
+        for p in cart:
             Product = Model.get('product.product')
-            product = Product.find(['id', '=', session['productid']])
-            return product
+            product = Product.find(['id', '=', p])
+            if product is not None:
+                products.append(product[0])
+        return products
     except KeyError:
-        # session is not initialized
+        print("cart is empty.")
         return None
 
 
@@ -211,14 +216,20 @@ def cart():
     config.set_trytond(DATABASE_NAME, config_file=CONFIG)
     User = Model.get('res.user')
     user = User.find(['id', '=', '1'])
-    product = getProductFromSession()
+    cart = getProductFromSession()
     session['user_name'] = 'paypal_testuser'
-    return render_template('cart.html', message=user[0].name, id=user[0].id, product=product, title="Milliondog", page='Cart')
+    return render_template('cart.html', message=user[0].name, id=user[0].id, cart=cart, title="Milliondog", page='Cart')
 
 
 @app.route('/cart/add/<productid>')
 def cart_add(productid=None):
-    session['productid'] = productid
+    cart = []
+    try:
+        cart = session['cart']
+    except KeyError:
+        session['cart'] = cart
+    if productid not in cart:
+        cart.append(productid)
     return redirect("/cart")
 
 @app.route('/account/')
@@ -274,9 +285,16 @@ def contact():
     page_content = gettext(u'You can send us a message here:')
     form = ContactForm()
     if form.validate_on_submit():
-        flash('Send message for name="%s", email=%s, message=%s, answer=%s' %
-              (form.name.data, form.email.data, form.message.data, form.answer.data))
-        return redirect('/index')
+        flash(gettext(u'Thank you for your message.'))
+        msg = Message("Neue Nachricht über milliondog.com Kontaktformular",
+                  sender="milliondog.com@gmail.com",
+                  recipients=["milliondog.com@gmail.com"])
+        msg.body = ('Name: %s\nEmail: %s\nBetreff: %s\n Nachricht: %s\n Sicherheitsantwort: %s' %
+                    (form.name.data, form.email.data, form.subject.data, form.message.data, form.answer.data))
+        msg.html = ('<b>Formularfelder</b><br>Name: %s<br>Email: %s<br>Betreff: %s<br> Nachricht: %s'
+                    '<br> Sicherheitsantwort: %s<br>' %
+                    (form.name.data, form.email.data, form.subject.data, form.message.data, form.answer.data))
+        app.mail.send(msg)
     return render_template('contact.html',
                            pt=page_topic, pc=page_content, title="Milliondog", page=gettext(u'Contact'),
                            form=form)

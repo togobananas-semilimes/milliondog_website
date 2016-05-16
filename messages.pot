@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-04-26 17:26+0200\n"
+"POT-Creation-Date: 2016-05-16 14:32+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,11 +17,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.0\n"
 
-#: flask_shop/views.py:53 flask_shop/templates/layout.html:52
+#: flask_shop/views.py:92 flask_shop/views.py:97
+#: flask_shop/templates/layout.html:52
 msgid "About us"
 msgstr ""
 
-#: flask_shop/views.py:54
+#: flask_shop/views.py:93
 msgid ""
 "\n"
 "                We created Milliondog because we love dogs. Milliondog "
@@ -34,11 +35,12 @@ msgid ""
 "                "
 msgstr ""
 
-#: flask_shop/views.py:62 flask_shop/templates/layout.html:53
+#: flask_shop/views.py:101 flask_shop/views.py:107
+#: flask_shop/templates/layout.html:53
 msgid "Send us"
 msgstr ""
 
-#: flask_shop/views.py:63
+#: flask_shop/views.py:102
 msgid ""
 "\n"
 "                <br>We welcome your enquiries regarding our exclusive "
@@ -52,59 +54,82 @@ msgid ""
 "                "
 msgstr ""
 
-#: flask_shop/views.py:72 flask_shop/templates/layout.html:50
+#: flask_shop/views.py:111 flask_shop/views.py:116
+msgid "Product"
+msgstr ""
+
+#: flask_shop/views.py:112
+msgid "Product:"
+msgstr ""
+
+#: flask_shop/views.py:122 flask_shop/views.py:166
+#: flask_shop/templates/layout.html:50
 msgid "Shop"
 msgstr ""
 
-#: flask_shop/views.py:73
+#: flask_shop/views.py:123
 msgid "Shop:"
 msgstr ""
 
-#: flask_shop/views.py:88 flask_shop/templates/layout.html:51
+#: flask_shop/views.py:171 flask_shop/views.py:173
+#: flask_shop/templates/layout.html:51
 msgid "Gallery"
 msgstr ""
 
-#: flask_shop/views.py:89
+#: flask_shop/views.py:172
 msgid "Gallery:"
 msgstr ""
 
-#: flask_shop/views.py:116
+#: flask_shop/views.py:187
+msgid "Products"
+msgstr ""
+
+#: flask_shop/views.py:199
 msgid "Start"
 msgstr ""
 
-#: flask_shop/views.py:117 flask_shop/views.py:265
-msgid "Payment"
-msgstr ""
-
-#: flask_shop/views.py:118
+#: flask_shop/views.py:200
 msgid "exclusive accessoires for your awesome darling"
 msgstr ""
 
-#: flask_shop/views.py:197 flask_shop/templates/layout.html:54
+#: flask_shop/views.py:275
+msgid "Sign in"
+msgstr ""
+
+#: flask_shop/views.py:284 flask_shop/views.py:300
+#: flask_shop/templates/layout.html:54
 msgid "Contact"
 msgstr ""
 
-#: flask_shop/views.py:198
+#: flask_shop/views.py:285
 msgid "You can send us a message here:"
 msgstr ""
 
-#: flask_shop/views.py:212
+#: flask_shop/views.py:288
+msgid "Thank you for your message."
+msgstr ""
+
+#: flask_shop/views.py:307 flask_shop/views.py:351
 msgid "Checkout"
 msgstr ""
 
-#: flask_shop/views.py:213
+#: flask_shop/views.py:308
 msgid "Please enter your address here:"
 msgstr ""
 
-#: flask_shop/views.py:266
+#: flask_shop/views.py:360 flask_shop/views.py:362
+msgid "Payment"
+msgstr ""
+
+#: flask_shop/views.py:361
 msgid "Please follow the link to pay with Paypal:"
 msgstr ""
 
-#: flask_shop/views.py:404
+#: flask_shop/views.py:499 flask_shop/views.py:507
 msgid "Payment and Shipping"
 msgstr ""
 
-#: flask_shop/views.py:405
+#: flask_shop/views.py:500
 msgid ""
 "\n"
 "                Payment & Shipping<br>\n"
@@ -118,11 +143,12 @@ msgid ""
 "                "
 msgstr ""
 
-#: flask_shop/views.py:416 flask_shop/templates/layout.html:88
+#: flask_shop/views.py:511 flask_shop/views.py:520
+#: flask_shop/templates/layout.html:88
 msgid "Right of revocation"
 msgstr ""
 
-#: flask_shop/views.py:417
+#: flask_shop/views.py:512
 msgid ""
 "\n"
 "                Right of revocation<br>\n"
@@ -138,11 +164,11 @@ msgid ""
 "                "
 msgstr ""
 
-#: flask_shop/views.py:429
+#: flask_shop/views.py:524 flask_shop/views.py:538
 msgid "General terms and conditions"
 msgstr ""
 
-#: flask_shop/views.py:430
+#: flask_shop/views.py:525
 msgid ""
 "\n"
 "        Terms & Conditions<br><br>\n"
@@ -159,19 +185,19 @@ msgid ""
 "                "
 msgstr ""
 
-#: flask_shop/views.py:447
+#: flask_shop/views.py:542 flask_shop/views.py:544
 msgid "Privacy Statment"
 msgstr ""
 
-#: flask_shop/views.py:448
+#: flask_shop/views.py:543
 msgid "<br>"
 msgstr ""
 
-#: flask_shop/views.py:453
+#: flask_shop/views.py:548 flask_shop/views.py:555
 msgid "Legal notice"
 msgstr ""
 
-#: flask_shop/views.py:454
+#: flask_shop/views.py:549
 msgid ""
 "Legal notice<br><br>\n"
 "                                MillionDog<br>\n"
@@ -184,8 +210,16 @@ msgid ""
 "                "
 msgstr ""
 
-#: flask_shop/templates/cart.html:3
+#: flask_shop/templates/cart.html:3 flask_shop/templates/cart.html:8
 msgid "cart"
+msgstr ""
+
+#: flask_shop/templates/cart.html:19
+msgid "cart_empty"
+msgstr ""
+
+#: flask_shop/templates/cart.html:20
+msgid "back_to_shop"
 msgstr ""
 
 #: flask_shop/templates/layout.html:49

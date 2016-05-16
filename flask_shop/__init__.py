@@ -3,11 +3,13 @@ from flask.ext.login import LoginManager
 from flask.ext.babel import Babel
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.json import JSONEncoder
+from flask_mail import Mail
 
 app = Flask(__name__)
 app.config.from_object('config')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.db = SQLAlchemy(app)
+app.mail = Mail(app)
 babel = Babel(app)
 lm = LoginManager()
 lm.init_app(app)

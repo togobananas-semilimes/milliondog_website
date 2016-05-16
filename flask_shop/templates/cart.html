@@ -5,19 +5,20 @@
   {{ super() }}
 {% endblock %}
 {% block content %}
-  <h3>Products:</h3>
-  {% if product %}
+  <h3>{{ _('cart') }}:</h3>
+  {% if cart %}
   <ul>
-    {% for n in product %}
+    {% for n in cart %}
     <li>
         {{n.id, n.name, n.description, n.list_price}}
     </li>
       {% endfor %}
   </ul>
+  <p><a href='/checkout'>Checkout</a></p>
+  {% else %}
+    {{ _('cart_empty') }}
+    <p><a href='/shop'>{{ _('back_to_shop') }}</a></p>
   {% endif %}
-  <h3>User list</h3>
-  <br>
-      <p>{{message}}</p>
-      <p>Value from the list: {{id}}</p>
-        <p><a href='/checkout'>Checkout</a></p>
+
+
 {% endblock %}

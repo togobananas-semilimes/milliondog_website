@@ -60,22 +60,6 @@
       </div>
     </div>
 
-    <div class="breadcrumb" style="display: none">
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <ul>
-        {% for message in messages %}
-            <li>{{ message }} </li>
-        {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
-
-      {% block heading %}
-            <p>_ {% block page %}{% endblock %}</p>
-        {% endblock %}
-    </div>
-
      <div class="container-fluid">
        {% block content %}{% endblock %}
      </div>

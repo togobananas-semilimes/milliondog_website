@@ -21,5 +21,6 @@ class CheckoutForm(Form):
 class ContactForm(Form):
     name = StringField('name', validators=[DataRequired()])
     email = StringField('email', validators=[DataRequired()])
+    subject = StringField('subject', validators=[DataRequired()])
     message = StringField('message', validators=[DataRequired()])
     answer = StringField('answer', validators=[DataRequired()])
