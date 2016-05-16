@@ -2,7 +2,7 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<h1>Sign In</h1>
+<h1>Register</h1>
 
     {% with messages = get_flashed_messages() %}
       {% if messages %}
@@ -12,9 +12,9 @@
             <li>{{ message }} </li>
         {% endfor %}
         </ul>
-        <p><a href='/login'>{{ _('login') }}</a></p>
+        <p><a href='/register'>{{ _('register') }}</a></p>
       {% else %}
-        <form action="" method="post" name="login">
+        <form action="" method="post" name="register">
             {{ form.hidden_tag() }}
             <p>
                 Please enter your email:<br>
@@ -35,7 +35,7 @@
                 {% for error in form.answer.errors %}
                   <span style="color: red;">[{{error}}]</span>
                 {% endfor %}</p>
-            <p><input type="submit" value="Sign In"></p>
+            <p><input type="submit" value="Register"></p>
         </form>
       {% endif %}
     {% endwith %}

@@ -2,7 +2,7 @@
 from flask import Flask, render_template, flash, redirect, session, url_for, request, g
 from flask_login import login_required, current_user
 from flask_shop import app
-from .forms import LoginForm, ContactForm, CheckoutForm
+from .forms import LoginForm, RegisterForm, ContactForm, CheckoutForm
 from proteus import config, Model, Wizard, Report
 from flask_babel import gettext, refresh
 from flask_mail import Message
@@ -14,6 +14,7 @@ import json
 from decimal import *
 import psycopg2
 from passlib.hash import pbkdf2_sha256
+from validate_email import validate_email
 
 CONFIG = "./tryton.conf"
 DATABASE_NAME = "tryton_dev"
@@ -266,25 +267,73 @@ def setcurrency(currency=None):
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        flash('Login requested for name="%s", remember_me=%s' %
-              (form.name.data, str(form.name.data)))
-        config.set_trytond(DATABASE_NAME, config_file=CONFIG)
-        User = Model.get('res.user')
-        user = User.find(['login', '=', form.name.data])
-        if user:
-            print('User found: ' + user[0].name)
+        is_valid = validate_email(form.email.data)
+        if is_valid:
+            flash('Login requested for name="%s", remember_me=%s' %
+                  (form.email.data, str(form.remember_me.data)))
+            config.set_trytond(DATABASE_NAME, config_file=CONFIG)
+            User = Model.get('res.user')
+            user = User.find(['login', '=', form.email.data])
+            if user:
+                passwordhash = user[0].password_hash
+                print('User found: ' + user[0].name)
+                start = time.time()
+                is_valid = pbkdf2_sha256.verify(form.password.data, passwordhash)
+                end = time.time()
+                if is_valid:
+                    flash(gettext(u'login successful.'))
+                    print('login successful in ' + str(end-start) + ' msec.')
+                    session['email'] = user[0].name
+                    session['userid'] = user[0].id
+                else:
+                    flash(gettext(u'invalid email or password.'))
+                    print('login failed: invalid password')
+            else:
+                flash(gettext(u'invalid email or password.'))
+                print('No user found with login ' + form.email.data)
         else:
-            print('No user found with login ' + form.name.data)
-        start = time.time()
-        hash = pbkdf2_sha256.encrypt(form.password.data, rounds=100000, salt_size=64)
-        end = time.time()
-        print('password hash for user ' + form.name.data + ': ' + hash)
-        if pbkdf2_sha256.verify(form.password.data, hash):
-            end2 = time.time()
-            print('login successful in ' + str(end-start) + ' msec, verify in ' + str(end2 - end) + " msec.")
-        return redirect('/index')
+            flash(gettext(u'Invalid email address given.'))
+            print('login failed: invalid email')
     return render_template('login.html',
                            title="Milliondog", page=gettext('Sign in'), form=form)
+
+@app.route('/register/', methods=['GET', 'POST'])
+def register():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        is_valid = validate_email(form.email.data)
+        if is_valid:
+            config.set_trytond(DATABASE_NAME, config_file=CONFIG)
+            User = Model.get('res.user')
+            user = User.find(['email', '=', form.email.data])
+            if user:
+                flash(gettext(u'Email address already registered.'))
+                print('Email address ' + form.email.data + ' already registered.')
+            else:
+                flash('Login requested for email="%s", remember_me=%s' %
+                      (form.email.data, str(form.remember_me.data)))
+                config.set_trytond(DATABASE_NAME, config_file=CONFIG)
+                User = Model.get('res.user')
+                user = User()
+                if user.id < 0:
+                    session['email'] = form.email.data
+                    passwordhash = pbkdf2_sha256.encrypt(form.password.data, rounds=100000, salt_size=64)
+                    user.name = form.email.data
+                    user.login = form.email.data
+                    user.password_hash = passwordhash
+                    user.email = form.email.data
+                    user.save()
+                    flash('Registration successful for email="%s", remember_me=%s' %
+                      (form.email.data, str(form.remember_me.data)))
+                else:
+                    flash(gettext(u'System is down.'))
+                    print('Cannot register email ' + form.email.data)
+        else:
+            flash(gettext(u'Invalid email address given.'))
+            print('Invalid email address ' + form.email.data)
+    return render_template('register.html',
+                           title="Milliondog", page=gettext('Register'), form=form)
+
 
 @app.route('/logout/')
 def logout():

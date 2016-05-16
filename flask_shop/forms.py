@@ -3,7 +3,13 @@ from wtforms import StringField, BooleanField, PasswordField, TextAreaField
 from wtforms.validators import DataRequired
 
 class LoginForm(Form):
-    name = StringField('name', validators=[DataRequired()])
+    email = StringField('email', validators=[DataRequired()])
+    password = PasswordField('password', validators=[DataRequired()])
+    remember_me = BooleanField('remember_me', default=False)
+    answer = StringField('answer', validators=[DataRequired()])
+
+class RegisterForm(Form):
+    email = StringField('email', validators=[DataRequired()])
     password = PasswordField('password', validators=[DataRequired()])
     remember_me = BooleanField('remember_me', default=False)
     answer = StringField('answer', validators=[DataRequired()])
