@@ -614,19 +614,25 @@ def ipn():
                     check_order = False
                 if check_order:
                     # change sale state to 'confirmed'
-                    if saleList[0].comment is None:
-                        saleList[0].comment = 'PAYPAL IPN DATA\n'+str(values)+'\n'
-                    else:
-                        saleList[0].comment += '\nPAYPAL IPN DATA\n'+str(values)+'\n'
-                    saleList[0].save()
+                    Attachments = Model.get('ir.attachment')
+                    attachment = Attachments()
+                    attachment.name = 'PAYPAL IPN DATA'
+                    attachment.resource = saleList[0]
+                    attachment.description = 'PAYPAL IPN DATA\n'+str(values)+'\n'
+                    attachment.save()
+                    # saleList[0].save()
                     try:
                         saleList[0].click('quote')
                     except Exception as e:
                         print 'Exception: Could not update sale state '+str(e)
                 else:
                     # add note that something failed in payment
-                    saleList[0].comment = 'ERROR WITH PAYPAL IPN DATA\n'+str(values)+'\n'
-                    saleList[0].save()
+                    Attachments = Model.get('ir.attachment')
+                    attachment = Attachments()
+                    attachment.name = 'PAYPAL IPN DATA'
+                    attachment.resource = saleList[0]
+                    attachment.description = 'ERROR WITH PAYPAL IPN DATA\n'+str(values)+'\n'
+                    attachment.save()
         else:
             with open('/tmp/ipnout.txt','a') as f:
                 data = 'FAILURE\n'+str(values)+'\n'
