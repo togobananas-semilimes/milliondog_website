@@ -10,6 +10,17 @@ app.config.from_object('config')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.db = SQLAlchemy(app)
 app.mail = Mail(app)
+app.config.update(
+    DEBUG=True,
+    # EMAIL SETTINGS
+    MAIL_SERVER='smtp.gmail.com',
+    MAIL_PORT=465,
+    MAIL_USE_SSL=True,
+    MAIL_USERNAME = 'milliondog.com@gmail.com',
+    MAIL_PASSWORD = 'milliondog.123'
+    )
+mail = Mail(app)
+
 babel = Babel(app)
 lm = LoginManager()
 lm.init_app(app)
