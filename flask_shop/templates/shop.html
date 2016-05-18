@@ -8,29 +8,51 @@
   <h3>{{ pt }}</h3>
   <br>
       <p>{{ pc |safe }}</p>
-  <p>My string: {{db_model}}</p>
+  <p>{{db_model}}
+    <br>- <a href="/shop/Cosy-Bandana">Cosy Bandana</a>
+    [ <a href="/shop/Cosy-Bandana/S">S</a> |
+      <a href="/shop/Cosy-Bandana/M">M</a> |
+      <a href="/shop/Cosy-Bandana/L">L</a>
+    ]
+    - <a href="/shop/Cosy-Loop">Cosy Loop</a></p>
+    [ <a href="/shop/Cosy-Loop/XS-S">XS-S</a> |
+      <a href="/shop/Cosy-Loop/S-M">S-M</a> |
+      <a href="/shop/Cosy-Loop/M-L">M-L</a> |
+      <a href="/shop/Cosy-Loop/L-XL">L-XL</a>
+    ]
+    - <a href="/shop/Cosy-Kaye">Cosy Kaye</a>
+    [ <a href="/shop/Cosy-Kaye/XS-S">XS-S</a> |
+      <a href="/shop/Cosy-Kaye/S-M">S-M</a> |
+      <a href="/shop/Cosy-Kaye/M-L">M-L</a>
+    ]
   <p>Loop through the list {{ db_list.length }}:</p>
-  <ul>
     {% for n in db_list %}
-    <li>
-      <a href="/product/{{n.id}}">Details</a> &nbsp;
-      <a href="/cart/add/{{n.id}}">Buy</a>{{n.id, n.code, n.description, n.name, n.template, n.attributes, n.list_price}}
-      {% if n.attributes %}
-        <br><img src="/static/products/{{ n.attributes['image_tn'] }}">
-        <ul>
-          <li>{{ n.attributes['serial_number'] }}</li>
-          <li>{{ n.attributes['pattern'] }}</li>
-          <li>{{ n.attributes['color'] }}</li>
-          <li>{{ n.attributes['size'] }}</li>
-        </ul>
-      {% endif %}
+        <table>
+          <tr>
+             {% if n.attributes %}
+            <td>
+              <ul>
+                <li>{{ n.attributes['serial_number'] }}</li>
+                <li>{{ n.attributes['pattern'] }}</li>
+                <li>{{ n.attributes['color'] }}</li>
+                <li>{{ n.attributes['size'] }}</li>
+              </ul>
+            </td>
+            <td><img src="/static/products/{{ n.attributes['image_tn'] }}"></td>
+            {% endif %}
+            <td><a href="/product/{{n.id}}">Details</a> &nbsp;
+              <a href="/cart/add/{{n.id}}">Buy</a>
+              <br>{{n.id, n.code, n.description, n.name, n.template}}
+              <br>{{n.list_price, n.category}}
+              <br>{{n.attributes}}
+            </td>
+          </tr>
+        </table>
       <ul>
         {% for o in n.categories %}
         <li>{{o.id, o.name, o.parent}}</li>
         {% endfor %}
       </ul>
-    </li>
     {% endfor %}
-  </ul>
   <h3></h3>
 {% endblock %}

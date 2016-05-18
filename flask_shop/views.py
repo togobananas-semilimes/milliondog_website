@@ -20,13 +20,36 @@ CONFIG = "./tryton.conf"
 DATABASE_NAME = "tryton_dev"
 config.set_trytond(DATABASE_NAME, config_file=CONFIG)
 
-def getProductDirect():
+def getProductDirect(category=None, size=None):
+    if category is None:
+        categoryCondition = 'and 1 = 1 '
+    else:
+        categoryCondition = "and pc.name like '%" + category + "%' "
+    if size is None:
+        sizeCondition = 'and 1 = 1 '
+    else:
+        sizeCondition = "and product.attributes like '%" + size + "%' "
     con = None
     result = None
     try:
         con = psycopg2.connect(database='tryton_dev', user='tryton', password='max')
         cur = con.cursor()
-        cur.execute("SELECT product.id, product.code, product.description, t.name, product.template, product.attributes, t.sale_uom, trim(p.value, ',') as list_price from product_product product, product_template t, ir_property p where product.code <> '' and product.template = t.id and p.res = 'product.template,'||t.id and p.field = 757 order by product.id")
+        cur.execute("SELECT product.id, product.code, product.description, " +
+                    "t.name, product.template, product.attributes, " +
+                    "t.sale_uom, trim(p.value, ',') as list_price, " +
+                    "pc.name as category " +
+                    "from product_product product, " +
+                    "product_template t, ir_property p, " +
+                    '"product_template-product_category" ptpc, product_category pc ' +
+                    "where product.code <> '' " +
+                    "and product.template = t.id " +
+                    "and p.res = 'product.template,'||t.id " +
+                    "and p.field = 757 " +
+                    "and t.id = ptpc.template " +
+                    categoryCondition +
+                    sizeCondition +
+                    "and ptpc.category = pc.id " +
+                    "order by product.id")
         resultset = cur.fetchall()
         result = []
         for p in resultset:
@@ -41,6 +64,7 @@ def getProductDirect():
                 row['attributes'] = json.loads(json_acceptable_string)
             row['sale_uom'] = p[6]
             row['list_price'] = p[7]
+            row['category'] = p[8]
             result.append(row)
         print result
     except psycopg2.DatabaseError, e:
@@ -115,52 +139,18 @@ def product(productid=None):
     return render_template('product.html', pt=page_topic, pc=page_content, product=product[0], title="Milliondog", page=gettext('Product'))
 
 
+@app.route("/shop/<category>/<size>")
+@app.route("/shop/<category>")
 @app.route("/shop/")
-def shop():
+def shop(category=None, size=None):
     print("Shop ")
     page_topic = gettext(u'Shop')
     page_content = gettext(u'Shop:')
-
-    '''    config.set_trytond(DATABASE_NAME, config_file=CONFIG)
     start = time.time()
-    Product = Model.get('product.product')
-    product = Product.find(['id', '>=', '0'])
-    productlist = []
-
-    for p in product:
-        temp = dict()
-        temp['id'] = p.id
-        temp['code'] = p.code
-        temp['name'] = p.name
-        temp['description'] = p.description
-        temp['list_price'] = p.list_price
-        if p.categories:
-            categories = []
-            tempc = dict()
-            for category in p.categories:
-                tempc['id'] = category.id
-                tempc['name'] = category.name
-                if category.parent:
-                    tempc['parent'] = category.parent.id
-                categories.append(tempc)
-            temp['categories'] = categories
-        productlist.append(temp)
-
+    # fastproducts = models.Product.query.all()
+    directproducts = getProductDirect(category, size)
     end = time.time()
-    print("Shop.product " + str(end - start))
-    start = time.time()
-    resp = render_template('shop.html', pt=page_topic, pc=page_content, db_model='Products', db_list=productlist,
-                           title="Milliondog", page=gettext('Shop'))
-    end = time.time()
-    print("Shop.render_template " + str(end - start))
-    '''
-    start = time.time()
-    fastproducts = models.Product.query.all()
-    attr = dict([])
-    list_price = dict([])
-    end = time.time()
-    print("Shop.fast_products " + str(end - start))
-    directproducts = getProductDirect()
+    print("Shop.getProductDirect " + str(end - start) + " ms.")
     resp = render_template('shop.html', pt=page_topic, pc=page_content, db_model='Products', db_list=directproducts,
                            title="Milliondog", page=gettext('Shop'))
     return resp
