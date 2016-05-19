@@ -22,13 +22,13 @@ config.set_trytond(DATABASE_NAME, config_file=CONFIG)
 
 def getProductDirect(category=None, size=None):
     if category is None:
-        categoryCondition = 'and 1 = 1 '
+        category_condition = 'and 1 = 1 '
     else:
-        categoryCondition = "and pc.name like '%" + category + "%' "
+        category_condition = "and pc.name like '%" + category + "%' "
     if size is None:
-        sizeCondition = 'and 1 = 1 '
+        size_condition = 'and 1 = 1 '
     else:
-        sizeCondition = "and product.attributes like '%" + size + "%' "
+        size_condition = "and product.attributes like '%" + size + "%' "
     con = None
     result = None
     try:
@@ -36,18 +36,20 @@ def getProductDirect(category=None, size=None):
         cur = con.cursor()
         cur.execute("SELECT product.id, product.code, product.description, " +
                     "t.name, product.template, product.attributes, " +
-                    "t.sale_uom, trim(p.value, ',') as list_price, " +
+                    "uom.id as uom_id, uom.name as uom_name, uom.symbol as uom_symbol, uom.rounding as uom_rounding, "
+                    "trim(p.value, ',') as list_price, " +
                     "pc.name as category " +
                     "from product_product product, " +
-                    "product_template t, ir_property p, " +
+                    "product_template t, ir_property p, product_uom uom, " +
                     '"product_template-product_category" ptpc, product_category pc ' +
                     "where product.code <> '' " +
-                    "and product.template = t.id " +
+                    "and product.template = t.id "
+                    "and t.sale_uom = uom.id " +
                     "and p.res = 'product.template,'||t.id " +
                     "and p.field = 757 " +
                     "and t.id = ptpc.template " +
-                    categoryCondition +
-                    sizeCondition +
+                    category_condition +
+                    size_condition +
                     "and ptpc.category = pc.id " +
                     "order by product.id")
         resultset = cur.fetchall()
@@ -62,9 +64,12 @@ def getProductDirect(category=None, size=None):
             if p[5] is not None:
                 json_acceptable_string = p[5].replace("'", "\"")
                 row['attributes'] = json.loads(json_acceptable_string)
-            row['sale_uom'] = p[6]
-            row['list_price'] = p[7]
-            row['category'] = p[8]
+            row['uom_id'] = p[6]
+            row['uom_name'] = p[7]
+            row['uom_symbol'] = p[8]
+            row['uom_rounding'] = p[9]
+            row['list_price'] = p[10]
+            row['category'] = p[11]
             result.append(row)
         print result
     except psycopg2.DatabaseError, e:

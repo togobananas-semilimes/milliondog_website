@@ -92,6 +92,7 @@ ScreenManagement:
 
 
 <ListItemButton>:
+    size: (100, '48dp')
     on_press: app.root.get_screen('posscreen').selection_change(*args)
 
 <POSScreen>:
@@ -110,6 +111,9 @@ ScreenManagement:
     tabbed_panel_wid: my_tabbed_panel
     scroll_view_wid: my_payslip_scroll_view
     list_view_wid: my_payslip_list
+    btn_qty_wid: my_btn_qty
+    btn_disc_wid: my_btn_disc
+    btn_price_wid: my_btn_price
 
     BoxLayout:
         orientation: 'horizontal'
@@ -128,9 +132,14 @@ ScreenManagement:
                     size_hint: 0.2, 1
                 Button:
                     on_release: app.root.current = "main"
-                    text: "Close session"
+                    text: "Close"
                     font_size: 10
-                    size_hint: 0.2, 1
+                    size_hint: 0.1, 1
+                Button:
+                    on_release: app.open_settings()
+                    text: "Settings"
+                    font_size: 10
+                    size_hint: 0.1, 1
                 Label:
                     id: my_custom_label
                     text: 'My label before button press'
@@ -143,9 +152,10 @@ ScreenManagement:
                     id: my_payslip_list
                     size_hint_y: .8
                     adapter:
-                        ListAdapter(data=root.my_data,
+                        ListAdapter(data=root.my_data_view,
+                        args_converter=lambda row_index, obj: {'text': obj.text, 'size_hint_y': None, 'height': 48},
                         selection_mode='single',
-                        allow_empty_selection=False,
+                        allow_empty_selection=True,
                         cls=ListItemButton)
                     canvas.before:
                         Color:
@@ -188,76 +198,80 @@ ScreenManagement:
                         Button:
                             text: '1'
                             size_hint: .25, 1
-                            on_release: root.do_action()
+                            on_release: app.root.get_screen('posscreen').do_action(1)
                         Button:
                             text: '2'
                             size_hint: .25, 1
-                            on_release: root.do_action()
+                            on_release: app.root.get_screen('posscreen').do_action(2)
                         Button:
                             text: '3'
                             size_hint: .25, 1
-                            on_release: root.do_action()
+                            on_release: app.root.get_screen('posscreen').do_action(3)
                         Button:
+                            id: my_btn_qty
                             text: 'Qty'
                             size_hint: .25, 1
-                            on_release: root.do_action()
+                            on_release: app.root.get_screen('posscreen').do_action('Qty')
+                            background_color: 0.81, 0.27, 0.33, 1
                     BoxLayout:
                         orientation: 'horizontal'
                         padding: 1
                         Button:
                             text: '4'
                             size_hint: .25, 1
-                            on_release: root.do_action()
+                            on_release: app.root.get_screen('posscreen').do_action(4)
                         Button:
                             text: '5'
                             size_hint: .25, 1
-                            on_release: root.do_action()
+                            on_release: app.root.get_screen('posscreen').do_action(5)
                         Button:
                             text: '6'
                             size_hint: .25, 1
-                            on_release: root.do_action()
+                            on_release: app.root.get_screen('posscreen').do_action(6)
                         Button:
+                            id: my_btn_disc
                             text: 'Disc'
                             size_hint: .25, 1
-                            on_release: root.do_action()
+                            on_release: app.root.get_screen('posscreen').do_action('Disc')
                     BoxLayout:
                         orientation: 'horizontal'
                         padding: 1
                         Button:
                             text: '7'
                             size_hint: .25, 1
-                            on_release: root.do_action()
+                            on_release: app.root.get_screen('posscreen').do_action(7)
                         Button:
                             text: '8'
                             size_hint: .25, 1
-                            on_release: root.do_action()
+                            on_release: app.root.get_screen('posscreen').do_action(8)
                         Button:
                             text: '9'
                             size_hint: .25, 1
-                            on_release: root.do_action()
+                            on_release: app.root.get_screen('posscreen').do_action(9)
                         Button:
+                            id: my_btn_price
                             text: 'Price'
                             size_hint: .25, 1
-                            on_release: root.do_action()
+                            on_release: app.root.get_screen('posscreen').do_action('Price')
                     BoxLayout:
                         orientation: 'horizontal'
                         padding: 1
                         Button:
-                            text: '+/-'
+                            text: '.'
                             size_hint: .25, 1
-                            on_release: root.do_action()
+                            on_release: app.root.get_screen('posscreen').do_action('.')
                         Button:
                             text: '0'
                             size_hint: .25, 1
-                            on_release: root.do_action()
+                            on_release: app.root.get_screen('posscreen').do_action(0)
                         Button:
-                            text: '.'
+                            text: '+/-'
                             size_hint: .25, 1
-                            on_release: root.do_action()
+                            on_release: app.root.get_screen('posscreen').do_action('+/-')
                         Button:
                             text: 'Del'
                             size_hint: .25, 1
-                            on_release: root.do_action()
+                            on_release: app.root.get_screen('posscreen').do_action('Del')
 
 
         BoxLayout:

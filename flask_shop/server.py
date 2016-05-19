@@ -13,12 +13,31 @@ DATABASE_NAME = "tryton_dev"
 config.set_trytond(DATABASE_NAME, config_file=CONFIG)
 
 def getProductDirect():
+    category_condition = 'and 1 = 1 '
+    size_condition = 'and 1 = 1 '
     con = None
     result = None
     try:
         con = psycopg2.connect(database='tryton_dev', user='tryton', password='max')
         cur = con.cursor()
-        cur.execute("SELECT product.id, product.code, product.description, t.name, product.template, product.attributes, t.sale_uom, trim(p.value, ',') as list_price from product_product product, product_template t, ir_property p where product.template = t.id and p.res = 'product.template,'||t.id and p.field = 757 order by product.id")
+        cur.execute("SELECT product.id, product.code, product.description, " +
+                    "t.name, product.template, product.attributes, " +
+                    "uom.id as uom_id, uom.name as uom_name, uom.symbol as uom_symbol, uom.rounding as uom_rounding, "
+                    "trim(p.value, ',') as list_price, " +
+                    "pc.name as category " +
+                    "from product_product product, " +
+                    "product_template t, ir_property p, product_uom uom, " +
+                    '"product_template-product_category" ptpc, product_category pc ' +
+                    "where product.code <> '' " +
+                    "and product.template = t.id "
+                    "and t.sale_uom = uom.id " +
+                    "and p.res = 'product.template,'||t.id " +
+                    "and p.field = 757 " +
+                    "and t.id = ptpc.template " +
+                    category_condition +
+                    size_condition +
+                    "and ptpc.category = pc.id " +
+                    "order by product.id")
         resultset = cur.fetchall()
         result = []
         for p in resultset:
@@ -31,8 +50,12 @@ def getProductDirect():
             if p[5] is not None:
                 json_acceptable_string = p[5].replace("'", "\"")
                 row['attributes'] = json.loads(json_acceptable_string)
-            row['sale_uom'] = p[6]
-            row['list_price'] = p[7]
+            row['uom_id'] = p[6]
+            row['uom_name'] = p[7]
+            row['uom_symbol'] = p[8]
+            row['uom_rounding'] = p[9]
+            row['list_price'] = p[10]
+            row['category'] = p[11]
             result.append(row)
         print result
     except psycopg2.DatabaseError, e:
@@ -59,7 +82,9 @@ def get_products():
     products = getProductDirect()
     list = []
     for p in products:
-        list.append({'id': p['id'], 'code': p['code'], 'name': p['name'], 'price': p['list_price']})
+        list.append({'id': p['id'], 'code': p['code'], 'name': p['name'], 'price': p['list_price'],
+                     'uom_id': p['uom_id'], 'uom_name': p['uom_name'], 'uom_symbol': p['uom_symbol'],
+                     'uom_rounding': p['uom_rounding']})
     return jsonify(result=list)
 
 

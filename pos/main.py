@@ -1,6 +1,7 @@
 from kivy.core.window import Window
 from kivy.lang import Builder
 from kivy.config import ConfigParser
+from kivy.app import App
 from POSScreen import *
 
 
@@ -91,7 +92,7 @@ class CustomerScreen(Screen):
             print "Error: Could not load products"
 
     def do_action(self, event):
-        print('Hurray button was ')
+        print('CustomerScreen Button was ' + str(event))
         self.label_wid.text = event.id
         self.manager.get_screen('posscreen').customerid = event.id
 
