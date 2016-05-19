@@ -32,6 +32,8 @@ ScreenManagement:
         pos: (root.right - self.width) / 2, (root.top - self.height) / 2
 
 <PaymentScreen>:
+    label_wid: payment_amount_due
+
     name: "paymentscreen"
     canvas.before:
         Color:
@@ -40,8 +42,8 @@ ScreenManagement:
             pos: self.pos
             size: self.size
     Label:
-        id: main_username
-        text: 'Amount'
+        id: payment_amount_due
+        text: 'Due'
         size_hint: .3, .1
         pos: (root.right - self.width) / 2, ((root.top - self.height) / 2) + self.height
     Button:
@@ -105,6 +107,7 @@ ScreenManagement:
             size: self.size
 
     label_wid: my_custom_label
+    label_total_wid: my_total_label
     scroll_view_wid: my_scroll_view
     grid_layout_wid: my_grid_layout
     text_input_wid: my_search_textinput
@@ -142,8 +145,12 @@ ScreenManagement:
                     size_hint: 0.1, 1
                 Label:
                     id: my_custom_label
-                    text: 'My label before button press'
-                    size_hint: 0.6, 1
+                    text: ''
+                    size_hint: 0.3, 1
+                Label:
+                    id: my_total_label
+                    text: 'Total: 0.00'
+                    size_hint: 0.3, 1
             ScrollView:
                 id: my_payslip_scroll_view
                 text: 'items in list'

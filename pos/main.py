@@ -1,6 +1,7 @@
 from kivy.core.window import Window
 from kivy.lang import Builder
 from kivy.config import ConfigParser
+from kivy.properties import ObjectProperty
 from kivy.app import App
 from POSScreen import *
 
@@ -10,6 +11,12 @@ class MainScreen(Screen):
 
 
 class PaymentScreen(Screen):
+    label_wid = ObjectProperty()
+
+    def on_pre_enter(self, *args):
+        print ('PaymentScreen on_pre_enter...')
+        self.label_wid.text = 'Due ' + str(self.manager.get_screen('posscreen').get_total())
+
     def getProduct(self, productstr):
         product_json = self.manager.get_screen('posscreen').products_json
         code = productstr.split()[0]

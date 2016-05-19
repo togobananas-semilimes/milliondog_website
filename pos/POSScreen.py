@@ -48,6 +48,7 @@ class POSScreen(Screen):
     _mode = 'Qty'
     _current_value = 0.0
     label_wid = ObjectProperty()
+    label_total_wid = ObjectProperty()
     info = StringProperty()
     default_currency = 'CHF'
     products_list = []
@@ -285,13 +286,6 @@ class POSScreen(Screen):
                         self._selected_line_index -= 1
                     else:
                         print('List is empty')
-        self.label_wid.text = self.info
-        print('mode: ' + self._mode +
-              ' info: ' + self.info +
-              ' product_code:' + product_code +
-              ' qty:' + str(active_line.qty) +
-              ' price:' + str(active_line.price) +
-              ' discount:' + str(active_line.discount))
         if do_update_line:
             if self._mode == 'Qty':
                 if len(self.info) > 0:
@@ -314,8 +308,15 @@ class POSScreen(Screen):
                     self.update_qty_disc_price(product_code, active_line.qty, active_line.discount, active_line.price)
                 else:
                     self.update_qty_disc_price(product_code, active_line.qty, active_line.discount, Decimal(self.info))
-        print(self.info)
+        print('mode: ' + self._mode +
+              ' info: ' + self.info +
+              ' product_code:' + product_code +
+              ' qty:' + str(active_line.qty) +
+              ' price:' + str(active_line.price) +
+              ' discount:' + str(active_line.discount))
+        self.label_wid.text = self.info
         print(str(self.get_total()))
+        self.label_total_wid.text = 'Total: ' + str(self.get_total())
 
     def build(self):
         config = ConfigParser.get_configparser(name='app')
