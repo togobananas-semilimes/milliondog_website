@@ -344,8 +344,9 @@ ScreenManagement:
 
     label_wid: my_custom_label
     label_total_wid: my_total_label
-    scroll_view_wid: my_scroll_view
-    grid_layout_wid: my_grid_layout
+    scroll_view_home_wid: my_home_scroll_view
+    grid_layout_home_wid: my_home_grid_layout
+    grid_layout_search_wid: my_search_grid_layout
     text_input_wid: my_search_textinput
     tabbed_panel_wid: my_tabbed_panel
     scroll_view_payslip_wid: my_payslip_scroll_view
@@ -354,6 +355,8 @@ ScreenManagement:
     btn_disc_wid: my_btn_disc
     btn_price_wid: my_btn_price
     btn_customer_wid: my_customer_button
+    tab_home_wid: my_home_tab
+    tab_search_wid: my_search_tab
 
     BoxLayout:
         orientation: 'horizontal'
@@ -527,12 +530,15 @@ ScreenManagement:
                 size_hint: 1, .05
                 do_default_tab: False
                 Button:
+                    width: 50
                     size_hint: 0.2, 1
                     text: '1'
                 Button:
+                    width: 50
                     size_hint: 0.2, 1
                     text: '+'
                 Button:
+                    width: 50
                     size_hint: 0.2, 1
                     text: '-'
             BoxLayout:
@@ -540,7 +546,7 @@ ScreenManagement:
                 padding: 0
                 size_hint: 1, .05
                 Button:
-                    text: 'Home'
+                    text: 'All'
                     size_hint: .25, 1
                     on_release: app.root.get_screen('posscreen').do_category('Home')
                 TextInput:
@@ -554,46 +560,27 @@ ScreenManagement:
                 size_hint: 1, 1
                 do_default_tab: False
                 TabbedPanelItem:
+                    id: my_home_tab
                     text: 'Home'
                     ScrollView:
-                        id: my_scroll_view
+                        id: my_home_scroll_view
                         text: 'Product list'
                         size_hint: 1, 1
                         GridLayout:
-                            id: my_grid_layout
+                            id: my_home_grid_layout
                             cols: 4
                             spacing: 2
                             size_hint_y: None
 
                 TabbedPanelItem:
-                    text: '1'
-                    ScrollView:
-                        id: my_scroll_view
-                        text: 'Product list'
-                        size_hint: 1, 1
-                        GridLayout:
-                            cols: 4
-                            spacing: 2
-                            size_hint_y: None
-
-                TabbedPanelItem:
-                    text: '2'
-                    ScrollView:
-                        id: my_scroll_view
-                        text: 'Product list'
-                        size_hint: 1, 1
-                        GridLayout:
-                            cols: 4
-                            spacing: 2
-                            size_hint_y: None
-
-                TabbedPanelItem:
+                    id: my_search_tab
                     text: 'Search'
                     ScrollView:
-                        id: my_scroll_view
-                        text: 'Product list'
+                        id: my_search_scroll_view
+                        text: 'Product search list'
                         size_hint: 1, 1
                         GridLayout:
+                            id: my_search_grid_layout
                             cols: 4
                             spacing: 2
                             size_hint_y: None

@@ -97,7 +97,7 @@ class PaymentScreen(Screen):
             payslip_json = dict([])
             payslip_positions = self.manager.get_screen('posscreen').my_data_view
             customer = dict([])
-            customer['customerid'] = self.manager.get_screen('posscreen').customerid
+            customer['customerid'] = self.manager.get_screen('posscreen').customer_id
             payslip_json['customer'] = customer
             payslip_items = []
             for i in payslip_positions:

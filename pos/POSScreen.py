@@ -53,6 +53,7 @@ class POSScreen(Screen):
     info = StringProperty()
     default_currency = 'CHF'
     products_list = []
+    products_search_list = []
     products_json = []
     sale_json = []
     customer_id = 0
@@ -80,7 +81,7 @@ class POSScreen(Screen):
             print ('products loaded.')
 
             if len(result['result']) > 0:
-                self.grid_layout_wid.clear_widgets()
+                self.grid_layout_home_wid.clear_widgets()
             for i in result['result']:
                 code = i['code']
                 if code == '':
@@ -90,8 +91,8 @@ class POSScreen(Screen):
                 btn.bind(on_press=self.do_add_item)
                 self.products_list.append(btn)
                 print ('add online product ' + code)
-                self.grid_layout_wid.add_widget(btn)
-            self.grid_layout_wid.height = (len(result['result'])/4)*110
+                self.grid_layout_home_wid.add_widget(btn)
+            self.grid_layout_home_wid.height = (len(result['result'])/4)*110
         try:
             config = ConfigParser.get_configparser(name='app')
             print(config.get('serverconnection', 'server.url'))
@@ -107,7 +108,7 @@ class POSScreen(Screen):
             print("key={0}, val={1}".format(key, val))
         if len(self.products_list) > 0:
             for n in self.products_list:
-                self.grid_layout_wid.remove_widget(n)
+                self.grid_layout_home_wid.remove_widget(n)
         if len(self.products_list) == 0:
             with open('products.json') as data_file:
                 result = json.load(data_file)
@@ -121,8 +122,8 @@ class POSScreen(Screen):
                 btn.bind(on_press=self.do_add_item)
                 self.products_list.append(btn)
                 print ('add local product ' + code)
-                self.grid_layout_wid.add_widget(btn)
-            self.grid_layout_wid.height = (len(result['result'])/4)*110
+                self.grid_layout_home_wid.add_widget(btn)
+            self.grid_layout_home_wid.height = (len(result['result'])/4)*110
 
     def do_search(self):
         def on_success(req, result):
@@ -134,14 +135,15 @@ class POSScreen(Screen):
                 btn = ImageButton(source='./products/'+code+'-small.png', id=code, text=str(i['id']),
                                   size_hint_y=None, width=300, height=100)
                 btn.bind(on_press=self.do_add_item)
-                self.products_list.append(btn)
-                self.grid_layout_wid.add_widget(btn)
-            self.grid_layout_wid.height = (len(result['result'])/4+4)*110
+                self.products_search_list.append(btn)
+                self.grid_layout_search_wid.add_widget(btn)
+                self.tabbed_panel_wid.switch_to(self.tab_search_wid)
+            self.grid_layout_search_wid.height = (len(result['result'])/4+4)*110
 
-        if len(self.products_list) > 0:
-            for n in self.products_list:
-                self.grid_layout_wid.remove_widget(n)
-        self.products_list = []
+        if len(self.products_search_list) > 0:
+            for n in self.products_search_list:
+                self.grid_layout_search_wid.remove_widget(n)
+        self.products_search_list = []
         config = ConfigParser.get_configparser(name='app')
         producturl = config.get('serverconnection', 'server.url') + "pos/product/" + self.text_input_wid.text
         UrlRequest(producturl, on_success)
@@ -149,7 +151,7 @@ class POSScreen(Screen):
     def do_category(self, category):
         print('do_category: ' + category)
         if category == 'Home':
-            self.grid_layout_wid.clear_widgets()
+            self.grid_layout_home_wid.clear_widgets()
             with open('products.json') as data_file:
                 result = json.load(data_file)
                 self.products_json = result
@@ -162,8 +164,8 @@ class POSScreen(Screen):
                 btn.bind(on_press=self.do_add_item)
                 self.products_list.append(btn)
                 print ('add local product ' + code)
-                self.grid_layout_wid.add_widget(btn)
-            self.grid_layout_wid.height = (len(result['result'])/4)*110
+                self.grid_layout_home_wid.add_widget(btn)
+            self.grid_layout_home_wid.height = (len(result['result'])/4)*110
 
 
     def getProduct(self, code):
