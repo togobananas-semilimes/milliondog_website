@@ -26,6 +26,7 @@ class CustomerScreen(Screen):
             self.customer_list_wid.height = (len(result['result'])+4)*50
         try:
             print("Select Customer")
+            self.label_wid.text = self.manager.get_screen('posscreen').customer_id
             # clear customer
             config = ConfigParser.get_configparser(name='app')
             print(config.get('serverconnection', 'server.url'))
@@ -36,8 +37,9 @@ class CustomerScreen(Screen):
 
     def do_action(self, event):
         print('CustomerScreen Button was ' + str(event))
-        self.label_wid.text = event.id
-        self.manager.get_screen('posscreen').customerid = event.id
+        self.label_wid.text = '[' + event.id + '] ' + event.text
+        self.manager.get_screen('posscreen').customer_id = event.id
+        self.manager.get_screen('posscreen').btn_customer_wid.text = 'Customer: ' + event.text
 
 
 class ScreenManagement(ScreenManager):
@@ -51,8 +53,9 @@ class MainApp(App):
 
     def build_config(self, config):
         config.setdefaults('section1', {
-            'key1': 'value1',
-            'key2': '0'
+            'default_customer_id': '2',
+            'default_payment_type': 'cash',
+            'pos_printing_enabled': True
         })
         config.setdefaults('serverconnection', {
             'server.url': 'http://127.0.0.1:5000/'

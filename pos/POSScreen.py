@@ -55,7 +55,7 @@ class POSScreen(Screen):
     products_list = []
     products_json = []
     sale_json = []
-    customerid = 0
+    customer_id = 0
     payslip_items_list = []
     my_data_view = ListProperty([])
     selected_value = StringProperty('select a button')
@@ -66,6 +66,9 @@ class POSScreen(Screen):
         Clock.schedule_once(self.post_init, 0)
 
     def post_init(self, *args):
+        config = ConfigParser.get_configparser(name='app')
+        self.customer_id = config.get('section1', 'default_customer_id')
+        self.btn_customer_wid.text = 'Customer: ' + str(self.customer_id)
         print ('post_init...')
 
     def on_pre_enter(self, *args):
@@ -75,17 +78,20 @@ class POSScreen(Screen):
                 fp.close()
             self.products_json = result
             print ('products loaded.')
+
+            if len(result['result']) > 0:
+                self.grid_layout_wid.clear_widgets()
             for i in result['result']:
                 code = i['code']
                 if code == '':
                     code = '200001'
-                btn = ImageButton(source='./products/'+code+'-small.png', id=code, text=str(i['id']),
-                                  size_hint_y=None, width=300, height=100)
+                btn = Factory.CustomButton(image_source='./products/'+code+'-small.png', id=code,
+                                           size_hint_y=None, width=300, height=100, subtext=code)
                 btn.bind(on_press=self.do_add_item)
                 self.products_list.append(btn)
                 print ('add online product ' + code)
                 self.grid_layout_wid.add_widget(btn)
-            self.grid_layout_wid.height = (len(result['result'])/4+4)*110
+            self.grid_layout_wid.height = (len(result['result'])/4)*110
         try:
             config = ConfigParser.get_configparser(name='app')
             print(config.get('serverconnection', 'server.url'))
@@ -110,13 +116,13 @@ class POSScreen(Screen):
                 code = i['code']
                 if code == '':
                     code = '200001'
-                btn = ImageButton(source='./products/'+code+'-small.png', id=code, text=str(i['id']),
-                                  size_hint_y=None, width=300, height=100)
+                btn = Factory.CustomButton(image_source='./products/'+code+'-small.png', id=code,
+                                           size_hint_y=None, width=300, height=100, subtext=code)
                 btn.bind(on_press=self.do_add_item)
                 self.products_list.append(btn)
                 print ('add local product ' + code)
                 self.grid_layout_wid.add_widget(btn)
-            self.grid_layout_wid.height = (len(result['result'])/4+4)*110
+            self.grid_layout_wid.height = (len(result['result'])/4)*110
 
     def do_search(self):
         def on_success(req, result):
@@ -139,6 +145,26 @@ class POSScreen(Screen):
         config = ConfigParser.get_configparser(name='app')
         producturl = config.get('serverconnection', 'server.url') + "pos/product/" + self.text_input_wid.text
         UrlRequest(producturl, on_success)
+
+    def do_category(self, category):
+        print('do_category: ' + category)
+        if category == 'Home':
+            self.grid_layout_wid.clear_widgets()
+            with open('products.json') as data_file:
+                result = json.load(data_file)
+                self.products_json = result
+            for i in result['result']:
+                code = i['code']
+                if code == '':
+                    code = '200001'
+                btn = Factory.CustomButton(image_source='./products/'+code+'-small.png', id=code,
+                                           size_hint_y=None, width=300, height=100, subtext=code)
+                btn.bind(on_press=self.do_add_item)
+                self.products_list.append(btn)
+                print ('add local product ' + code)
+                self.grid_layout_wid.add_widget(btn)
+            self.grid_layout_wid.height = (len(result['result'])/4)*110
+
 
     def getProduct(self, code):
         for i in self.products_json['result']:

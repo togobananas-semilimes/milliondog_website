@@ -9,16 +9,24 @@
       "key": "server.url" },
 
     { "type": "options",
-      "title": "My first key",
-      "desc": "Description of my first key",
+      "title": "Default payment type",
+      "desc": "Default payment type",
       "section": "section1",
-      "key": "key1",
-      "options": ["value1", "value2", "another value"] },
+      "key": "default_payment_type",
+      "options": ["cash"] },
 
     { "type": "numeric",
-      "title": "My second key",
-      "desc": "Description of my second key",
+      "title": "Default customer id",
+      "desc": "Default customer id for payment slip",
       "section": "section1",
-      "key": "key2" }
+      "key": "default_customer_id" },
+
+    { "type": "options",
+      "title": "POS printing enabled",
+      "desc": "Enable POS printing",
+      "section": "section1",
+      "key": "pos_printing_enabled",
+      "options": ["True", "False"] }
 
 ]
+

@@ -23,12 +23,24 @@ ScreenManagement:
         write_tab: False
         multiline: False
         on_text_validate: app.root.current = "posscreen"
-        size_hint: .3, .1
+        size_hint: .3, None
+        height: 48
+        pos: (root.right - self.width) / 2, ((root.top - self.height) / 2) + self.height*2
+    TextInput:
+        id: main_password
+        password: True
+        text: 'admin'
+        write_tab: False
+        multiline: False
+        on_text_validate: app.root.current = "posscreen"
+        height: 48
+        size_hint: .3, None
         pos: (root.right - self.width) / 2, ((root.top - self.height) / 2) + self.height
     Button:
         on_release: app.root.current = "posscreen"
         text: "Start session"
-        size_hint: .3, .1
+        height: 48
+        size_hint: .3, None
         pos: (root.right - self.width) / 2, (root.top - self.height) / 2
 
 <PaymentScreen>:
@@ -286,7 +298,7 @@ ScreenManagement:
                 size_hint: .1, 1
             Label:
                 id: main_customer
-                text: 'default (0)'
+                text: ''
                 size_hint: .8, 1
             Button:
                 on_release: app.root.current = "posscreen"
@@ -302,6 +314,20 @@ ScreenManagement:
                 spacing: 2
                 size_hint_y: None
 
+<CustomButton@Button>:
+    background_color: 1, 1, 1, 1
+    image_source: ''
+    subtext: ''
+    GridLayout:
+        background_color: 1, 1, 1, 1
+        height: self.parent.height  # match the button's height
+        width: self.parent.width    # set to whatever you would like
+        pos: self.parent.pos        # match the button's position
+        cols: 1
+        Image:
+            source: root.image_source
+        Label:
+            text: root.subtext
 
 <ListItemButton>:
     size: (100, '48dp')
@@ -327,6 +353,7 @@ ScreenManagement:
     btn_qty_wid: my_btn_qty
     btn_disc_wid: my_btn_disc
     btn_price_wid: my_btn_price
+    btn_customer_wid: my_customer_button
 
     BoxLayout:
         orientation: 'horizontal'
@@ -364,10 +391,10 @@ ScreenManagement:
             ScrollView:
                 id: my_payslip_scroll_view
                 text: 'items in list'
-                size_hint: 1, .6
+                size_hint: 1, 0.6
                 ListView:
                     id: my_payslip_list
-                    size_hint_y: .8
+                    size_hint_y: 1
                     adapter:
                         ListAdapter(data=root.my_data_view,
                         args_converter=lambda row_index, obj: {'text': obj.text, 'size_hint_y': None, 'height': 48},
@@ -398,6 +425,7 @@ ScreenManagement:
                     orientation: 'vertical'
                     padding: 1
                     Button:
+                        id: my_customer_button
                         text: 'Customer'
                         size_hint: 1, .2
                         on_release: app.root.current = "customerscreen"
@@ -495,31 +523,77 @@ ScreenManagement:
             orientation: 'vertical'
             padding: 0
 
-            TabbedPanel:
-                id: my_tabbed_panel
-                size_hint: 1, .1
+            BoxLayout:
+                size_hint: 1, .05
                 do_default_tab: False
-                TabbedPanelItem:
+                Button:
                     size_hint: 0.2, 1
                     text: '1'
-                TabbedPanelItem:
+                Button:
                     size_hint: 0.2, 1
                     text: '+'
-                TabbedPanelItem:
+                Button:
                     size_hint: 0.2, 1
                     text: '-'
-            TextInput:
-                id: my_search_textinput
-                text: ''
-                multiline: False
-                size_hint: 1, .1
-                on_text_validate: root.do_search()
-            ScrollView:
-                id: my_scroll_view
-                text: 'Product list'
-                size_hint: 1, 0.8
-                GridLayout:
-                    id: my_grid_layout
-                    cols: 4
-                    spacing: 2
-                    size_hint_y: None
+            BoxLayout:
+                orientation: 'horizontal'
+                padding: 0
+                size_hint: 1, .05
+                Button:
+                    text: 'Home'
+                    size_hint: .25, 1
+                    on_release: app.root.get_screen('posscreen').do_category('Home')
+                TextInput:
+                    id: my_search_textinput
+                    text: ''
+                    multiline: False
+                    size_hint: .75, 1
+                    on_text_validate: root.do_search()
+            TabbedPanel:
+                id: my_tabbed_panel
+                size_hint: 1, 1
+                do_default_tab: False
+                TabbedPanelItem:
+                    text: 'Home'
+                    ScrollView:
+                        id: my_scroll_view
+                        text: 'Product list'
+                        size_hint: 1, 1
+                        GridLayout:
+                            id: my_grid_layout
+                            cols: 4
+                            spacing: 2
+                            size_hint_y: None
+
+                TabbedPanelItem:
+                    text: '1'
+                    ScrollView:
+                        id: my_scroll_view
+                        text: 'Product list'
+                        size_hint: 1, 1
+                        GridLayout:
+                            cols: 4
+                            spacing: 2
+                            size_hint_y: None
+
+                TabbedPanelItem:
+                    text: '2'
+                    ScrollView:
+                        id: my_scroll_view
+                        text: 'Product list'
+                        size_hint: 1, 1
+                        GridLayout:
+                            cols: 4
+                            spacing: 2
+                            size_hint_y: None
+
+                TabbedPanelItem:
+                    text: 'Search'
+                    ScrollView:
+                        id: my_scroll_view
+                        text: 'Product list'
+                        size_hint: 1, 1
+                        GridLayout:
+                            cols: 4
+                            spacing: 2
+                            size_hint_y: None
