@@ -15,6 +15,7 @@ import json
 import urllib2
 from kivy.clock import Clock
 from decimal import Decimal, InvalidOperation
+from kivy.factory import Factory
 #from escpos import *
 
 class ImageButton(ButtonBehavior, Image):
@@ -84,8 +85,7 @@ class POSScreen(Screen):
                 self.products_list.append(btn)
                 print ('add online product ' + code)
                 self.grid_layout_wid.add_widget(btn)
-            self.grid_layout_wid.height = (len(result['result'])/4+4)*100
-
+            self.grid_layout_wid.height = (len(result['result'])/4+4)*110
         try:
             config = ConfigParser.get_configparser(name='app')
             print(config.get('serverconnection', 'server.url'))
@@ -95,7 +95,7 @@ class POSScreen(Screen):
             else:
                 return
         except:
-            print "Error: Could not load products"
+            print "POSScreen Error: Could not load products"
         print "Initialize products selection"
         for key, val in self.ids.items():
             print("key={0}, val={1}".format(key, val))
@@ -116,9 +116,7 @@ class POSScreen(Screen):
                 self.products_list.append(btn)
                 print ('add local product ' + code)
                 self.grid_layout_wid.add_widget(btn)
-            self.grid_layout_wid.height = (len(result['result'])/4+4)*100
-
-
+            self.grid_layout_wid.height = (len(result['result'])/4+4)*110
 
     def do_search(self):
         def on_success(req, result):
@@ -132,7 +130,7 @@ class POSScreen(Screen):
                 btn.bind(on_press=self.do_add_item)
                 self.products_list.append(btn)
                 self.grid_layout_wid.add_widget(btn)
-            self.grid_layout_wid.height = (len(result['result'])/4+4)*100
+            self.grid_layout_wid.height = (len(result['result'])/4+4)*110
 
         if len(self.products_list) > 0:
             for n in self.products_list:
@@ -151,7 +149,6 @@ class POSScreen(Screen):
 
     def do_clear_item_list(self):
         print('do_clear_item_list')
-        del self.my_data_qty[:]
         del self.my_data_view[:]
         self.list_view_wid.height = self.height * 0.6
 
@@ -193,6 +190,8 @@ class POSScreen(Screen):
         print("selection_change: " + change.text + " " + str(change.is_selected))
         change.background_color = [1, 1, 1, 1]
         self.selected_value = 'Selected: {}'.format(change.text)
+        self.label_total_wid.text = 'Total: ' + str(self.get_total())
+
 
     def update_qty_disc_price(self, product_code, quantity, discount, price):
         if self.list_view_wid.adapter.get_count() > 0:
@@ -241,10 +240,17 @@ class POSScreen(Screen):
                     if self.info.startswith('-'):
                         self.info = self.info[1:]
                     else:
-                        self.info = '-' + self.info
+                        if len(self.info) > 0:
+                            self.info = '-' + self.info
+                        else:
+                            self.info = '0'
                 elif event == '.':
                     if '.' not in self.info:
-                        self.info += '.'
+                        if len(self.info) > 0:
+                            self.info += '.'
+                        else:
+                            self.info = '0.'
+
             if event == 'Disc':
                 self.btn_disc_wid.background_color = [0.81, 0.27, 0.33, 1]
                 self.btn_qty_wid.background_color = [1, 1, 1, 1]

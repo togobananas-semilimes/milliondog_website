@@ -33,6 +33,8 @@ ScreenManagement:
 
 <PaymentScreen>:
     label_wid: payment_amount_due
+    text_input_wid: payment_amount_tendered
+    label_change_wid: payment_amount_change
 
     name: "paymentscreen"
     canvas.before:
@@ -41,25 +43,226 @@ ScreenManagement:
         Rectangle:
             pos: self.pos
             size: self.size
-    Label:
-        id: payment_amount_due
-        text: 'Due'
-        size_hint: .3, .1
-        pos: (root.right - self.width) / 2, ((root.top - self.height) / 2) + self.height
-    Button:
-        on_release: app.root.current = "posscreen"
-        text: "Back"
-        size_hint: .3, .1
-        pos: (root.right - self.width) / 2, (root.top - self.height) / 2 + 2*self.height
-    Button:
-        on_release: self.parent.pay()
-        text: "Cash Payment"
-        size_hint: .3, .1
-        pos: (root.right - self.width) / 2, (root.top - self.height) / 2
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 0
+        BoxLayout:
+            id: bl_payment_header
+            cols: 3
+            spacing: 10
+            size_hint: 1, 0.1
+            Button:
+                on_release: app.root.current = "posscreen"
+                text: "<< Back"
+                size_hint: .1, 1
+            Label:
+                id: main_payment_title
+                text: 'Payment'
+                size_hint: .8, 1
+            Button:
+                on_release: app.root.get_screen('paymentscreen').pay()
+                text: "Validate >>"
+                size_hint: .1, 1
+        BoxLayout:
+            id: bl_payment_body
+            orientation: 'horizontal'
+            size_hint: 1, 0.9
+
+            BoxLayout:
+                id: bl_payment_body_cash
+                orientation: 'horizontal'
+                size_hint: 0.3, 1
+
+                StackLayout:
+                    orientation: 'rl-tb'
+                    id: payment_type
+                    size_hint: 0.3, 1
+
+                    Button:
+                        on_release: app.root.current = "posscreen"
+                        text: "Cash"
+                        size_hint: .9, .1
+
+                    Widget:
+
+            BoxLayout:
+                id: bl_payment_body_info
+                orientation: 'vertical'
+                size_hint: 0.7, 1
+
+                StackLayout:
+                    orientation: 'lr-tb'
+                    id: payment_type
+                    size_hint: 0.7, 0.3
+
+                    Label:
+                        text: 'Due'
+                        height: 40
+                        size_hint: .25, .2
+                        size_hint_y: None
+                    Label:
+                        text: 'Tendered'
+                        height: 40
+                        size_hint: .25, .2
+                        size_hint_y: None
+                    Label:
+                        text: 'Change'
+                        height: 40
+                        size_hint: .25, .2
+                        size_hint_y: None
+                    Label:
+                        text: 'Method'
+                        height: 40
+                        size_hint: .25, .2
+                        size_hint_y: None
+                    Label:
+                        id: payment_amount_due
+                        text: ''
+                        height: 40
+                        size_hint: .25, .2
+                        size_hint_y: None
+                    TextInput:
+                        id: payment_amount_tendered
+                        text: ''
+                        height: 40
+                        write_tab: False
+                        on_text_validate: None
+                        size_hint: .25, .2
+                        size_hint_y: None
+                    Label:
+                        id: payment_amount_change
+                        text: ''
+                        height: 40
+                        size_hint: .25, .2
+                        size_hint_y: None
+                    Label:
+                        id: payment_amount_method
+                        text: 'Cash (CHF)'
+                        height: 40
+                        size_hint: .25, .2
+                        size_hint_y: None
+                    Widget:
+                        height: 200
+                        size_hint: 1, .2
+
+                BoxLayout:
+                    id: bl_calc
+                    spacing: 10
+                    orientation: 'horizontal'
+                    size_hint: 1, 1
+
+                    GridLayout:
+                        id: bl_calculator
+                        cols: 4
+                        orientation: 'horizontal'
+                        size_hint: 0.5, 1
+                        Button:
+                            on_release: app.root.get_screen('paymentscreen').do_action(1)
+                            text: "1"
+                            size_hint: .25, .2
+                            size_hint_y: None
+                        Button:
+                            on_release: app.root.get_screen('paymentscreen').do_action(2)
+                            text: "2"
+                            size_hint: .25, .2
+                            size_hint_y: None
+                        Button:
+                            on_release: app.root.get_screen('paymentscreen').do_action(3)
+                            text: "3"
+                            size_hint: .25, .2
+                            size_hint_y: None
+                        Button:
+                            on_release: app.root.get_screen('paymentscreen').do_action('+10')
+                            text: "+10"
+                            size_hint: .25, .2
+                            size_hint_y: None
+                        Button:
+                            on_release: app.root.get_screen('paymentscreen').do_action(4)
+                            text: "4"
+                            size_hint: .25, .2
+                            size_hint_y: None
+                        Button:
+                            on_release: app.root.get_screen('paymentscreen').do_action(5)
+                            text: "5"
+                            size_hint: .25, .2
+                            size_hint_y: None
+                        Button:
+                            on_release: app.root.get_screen('paymentscreen').do_action(6)
+                            text: "6"
+                            size_hint: .25, .2
+                            size_hint_y: None
+                        Button:
+                            on_release: app.root.get_screen('paymentscreen').do_action('+20')
+                            text: "+20"
+                            size_hint: .25, .2
+                            size_hint_y: None
+                        Button:
+                            on_release: app.root.get_screen('paymentscreen').do_action(7)
+                            text: "7"
+                            size_hint: .25, .2
+                            size_hint_y: None
+                        Button:
+                            on_release: app.root.get_screen('paymentscreen').do_action(8)
+                            text: "8"
+                            size_hint: .25, .2
+                            size_hint_y: None
+                        Button:
+                            on_release: app.root.get_screen('paymentscreen').do_action(9)
+                            text: "9"
+                            size_hint: .25, .2
+                            size_hint_y: None
+                        Button:
+                            on_release: app.root.get_screen('paymentscreen').do_action('+50')
+                            text: "+50"
+                            size_hint: .25, .2
+                            size_hint_y: None
+                        Button:
+                            on_release: app.root.get_screen('paymentscreen').do_action('C')
+                            text: "C"
+                            size_hint: .25, .2
+                            size_hint_y: None
+                        Button:
+                            on_release: app.root.get_screen('paymentscreen').do_action(0)
+                            text: "0"
+                            size_hint: .25, .2
+                            size_hint_y: None
+                        Button:
+                            on_release: app.root.get_screen('paymentscreen').do_action('.')
+                            text: "."
+                            size_hint: .25, .2
+                            size_hint_y: None
+                        Button:
+                            on_release: app.root.get_screen('paymentscreen').do_action('Del')
+                            text: "Del"
+                            height: 80
+                            size_hint: .25, .2
+                            size_hint_y: None
+
+                    BoxLayout:
+                        id: bl_customer_invoice
+                        orientation: 'vertical'
+                        size_hint: 0.5, 1
+
+                        Button:
+                            on_release: app.root.current = "customerscreen"
+                            text: "Customer"
+                            height: 40
+                            size_hint: 1, .25
+                            size_hint_y: None
+                        Button:
+                            on_release: app.root.current = "posscreen"
+                            text: "Invoice"
+                            height: 40
+                            size_hint: 1, .25
+                            size_hint_y: None
+                        Widget:
+                            height: 400
+
 
 <CustomerScreen>:
     label_wid: main_customer
-    customer_list_wid: my_stack_layout
+    customer_list_wid: my_customer_scroll_view
 
     name: "customerscreen"
     canvas.before:
@@ -68,6 +271,7 @@ ScreenManagement:
         Rectangle:
             pos: self.pos
             size: self.size
+
     BoxLayout:
         orientation: 'vertical'
         padding: 0
@@ -88,9 +292,15 @@ ScreenManagement:
                 on_release: app.root.current = "posscreen"
                 text: "Back"
                 size_hint: .1, 1
-        StackLayout:
-            id: my_stack_layout
-            orientation: 'lr-tb'
+
+        ScrollView:
+            text: 'Customers'
+            size_hint: 1, .9
+            GridLayout:
+                id: my_customer_scroll_view
+                cols: 1
+                spacing: 2
+                size_hint_y: None
 
 
 <ListItemButton>:
@@ -112,7 +322,7 @@ ScreenManagement:
     grid_layout_wid: my_grid_layout
     text_input_wid: my_search_textinput
     tabbed_panel_wid: my_tabbed_panel
-    scroll_view_wid: my_payslip_scroll_view
+    scroll_view_payslip_wid: my_payslip_scroll_view
     list_view_wid: my_payslip_list
     btn_qty_wid: my_btn_qty
     btn_disc_wid: my_btn_disc
@@ -306,10 +516,10 @@ ScreenManagement:
                 on_text_validate: root.do_search()
             ScrollView:
                 id: my_scroll_view
-                text: 'My label before button press'
+                text: 'Product list'
                 size_hint: 1, 0.8
                 GridLayout:
                     id: my_grid_layout
                     cols: 4
-                    spacing: 10
+                    spacing: 2
                     size_hint_y: None
