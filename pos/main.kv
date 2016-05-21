@@ -357,6 +357,7 @@ ScreenManagement:
     btn_customer_wid: my_customer_button
     tab_home_wid: my_home_tab
     tab_search_wid: my_search_tab
+    icon_wid: my_icon_status
 
     BoxLayout:
         orientation: 'horizontal'
@@ -371,7 +372,8 @@ ScreenManagement:
                 padding: 1
                 size_hint: 1, .1
                 Image:
-                    source: 'logo.png'
+                    id: my_icon_status
+                    source: 'data/icon_offline.png'
                     size_hint: 0.2, 1
                 Button:
                     on_release: app.root.current = "main"

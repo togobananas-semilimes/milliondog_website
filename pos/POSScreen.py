@@ -5,6 +5,7 @@ from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.config import Config, ConfigParser
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.floatlayout import FloatLayout
 from kivy.properties import ObjectProperty, StringProperty, ListProperty
 from kivy.adapters.models import SelectableDataItem
 from kivy.uix.behaviors import ButtonBehavior
@@ -16,6 +17,8 @@ import urllib2
 from kivy.clock import Clock
 from decimal import Decimal, InvalidOperation
 from kivy.factory import Factory
+from kivy.uix.popup import Popup
+import os, os.path
 #from escpos import *
 
 class ImageButton(ButtonBehavior, Image):
@@ -23,6 +26,20 @@ class ImageButton(ButtonBehavior, Image):
 
 TRYTON_HOST = "http://192.168.1.102:5000/pos/products"
 TRYTON_HOST_SEARCH = "http://192.168.1.102:5000/pos/product/"
+
+
+class ImageButton(ButtonBehavior, FloatLayout, Image):
+    def on_press(self):
+        print ('POSScreen.ImageButton.on_press: upload payslips')
+        file_count = len([name for name in os.listdir('offline/') if os.path.isfile(name)])
+        popup = Popup(title='Uploading payslips', content=Label(text='Synchronizing ' + str(file_count) +
+                                                                     'payslips...'),
+                      size_hint=(None, None), size=(400, 400))
+        popup.open()
+        for fn in os.listdir('.'):
+            if os.path.isfile(fn):
+
+                print (fn)
 
 
 class DataItem(object):
@@ -74,6 +91,7 @@ class POSScreen(Screen):
 
     def on_pre_enter(self, *args):
         def on_success(req, result):
+            self.icon_wid.source = 'icon.png'
             with open('products.json', 'w') as fp:
                 json.dump(result, fp)
                 fp.close()

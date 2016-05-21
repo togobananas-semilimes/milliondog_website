@@ -7,6 +7,9 @@ from kivy.network.urlrequest import UrlRequest
 from kivy.uix.screenmanager import Screen
 import json
 from decimal import Decimal
+import uuid
+import os
+import traceback
 #from escpos import *
 
 
@@ -14,6 +17,7 @@ class PaymentScreen(Screen):
     label_wid = ObjectProperty()
     text_input_wid = ObjectProperty()
     label_change_wid = ObjectProperty()
+    icon_wid = ObjectProperty()
 
     def on_pre_enter(self, *args):
         print ('PaymentScreen on_pre_enter...')
@@ -71,7 +75,11 @@ class PaymentScreen(Screen):
             self.label_change_wid.text = ''
 
     def pay(self):
+        unique_id = uuid.uuid4()
+
         def on_success(req, result):
+            os.remove('offline/' + str(unique_id) + '.json')
+            self.manager.get_screen('posscreen').icon_wid.source = 'icon.png'
             with open('sale.json', 'w') as fp:
                 json.dump(result, fp)
                 fp.close()
@@ -81,14 +89,11 @@ class PaymentScreen(Screen):
             self.parent.current = "posscreen"
 
         def on_failure(req, result):
-            print ('on_failure: Could not send payment. Save to file instead.')
-            #TODO save order to file
-            self.manager.get_screen('posscreen').do_clear_item_list()
-            self.parent.current = "posscreen"
+            on_error(req, result)
 
         def on_error(req, result):
             print ('on_error: Could not send payment. Save to file instead.')
-            #TODO save order to file
+            self.manager.get_screen('posscreen').icon_wid.source = 'icon_offline.png'
             self.manager.get_screen('posscreen').do_clear_item_list()
             self.parent.current = "posscreen"
 
@@ -106,6 +111,9 @@ class PaymentScreen(Screen):
                 if next_element is not None:
                     payslip_items.append(next_element)
             payslip_json['items'] = payslip_items
+            with open('offline/' + str(unique_id) + '.json', 'w') as fp:
+                json.dump(payslip_json, fp)
+                fp.close()
             # clear list
             config = ConfigParser.get_configparser(name='app')
             print(config.get('serverconnection', 'server.url'))
@@ -117,5 +125,6 @@ class PaymentScreen(Screen):
             else:
                 self.manager.get_screen('posscreen').do_clear_item_list()
                 self.parent.current = "posscreen"
-        except:
-            print "PaymentScreen Error: Could not load products"
+        except Exception:
+            print(traceback.format_exc())
+            print "PaymentScreen.pay() Error: Could not send payslip"

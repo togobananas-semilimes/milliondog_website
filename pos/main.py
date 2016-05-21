@@ -48,7 +48,6 @@ class ScreenManagement(ScreenManager):
 presentation = Builder.load_file("main.kv")
 
 class MainApp(App):
-    icon = 'icon.png'
     title = 'Semilimes Point-of-Sale'
 
     def build_config(self, config):
